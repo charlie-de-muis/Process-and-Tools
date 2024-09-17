@@ -1,4 +1,4 @@
-GET http://localhost:3000/api/v1/clients/1
+GET http://localhost:3000/api/v1/warehouses/3
 API_KEY: a1b2c3d4e5
 
 // "Clients" in dit geval kan vervangen door warehouses of andere categorieen.
