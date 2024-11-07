@@ -1,9 +1,12 @@
 import socketserver
 import http.server
 import json
+import psycopg2
+from psycopg2 import sql
 
 from providers import auth_provider
 from providers import data_provider
+from models.Database_file import db_start
 
 from processors import notification_processor
 
@@ -388,7 +391,8 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 path = self.path.split("/")
                 if len(path) > 3 and path[1] == "api" and path[2] == "v1":
                     self.handle_get_version_1(path[3:], user)
-            except Exception:
+            except Exception as e:
+                print(e)
                 self.send_response(500)
                 self.end_headers()
 
@@ -803,6 +807,8 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
 if __name__ == "__main__":
     PORT = 3000
     with socketserver.TCPServer(("", PORT), ApiRequestHandler) as httpd:
+        cargohub_db = db_start()
+        cargohub_db.create_database()
         auth_provider.init()
         data_provider.init()
         notification_processor.start()
