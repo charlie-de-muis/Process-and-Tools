@@ -2,9 +2,9 @@ from models.warehouses import Warehouses
 from models.locations import Locations
 from models.transfers import Transfers
 from models.items import Items
-from models.item_lines import ItemLines
-from models.item_groups import ItemGroups
-from models.item_types import ItemTypes
+from models.item_lines import Item_Lines
+from models.item_groups import Item_Groups
+from models.item_types import Item_Types
 from models.inventories import Inventories
 from models.suppliers import Suppliers
 from models.orders import Orders
@@ -39,11 +39,11 @@ def init():
     global _items
     _items = Items()
     global _item_lines
-    _item_lines = ItemLines()
+    _item_lines = Item_Lines()
     global _item_groups
-    _item_groups = ItemGroups()
+    _item_groups = Item_Groups()
     global _item_types
-    _item_types = ItemTypes()
+    _item_types = Item_Types()
     global _inventories
     _inventories = Inventories()
     global _suppliers
