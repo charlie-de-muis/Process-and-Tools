@@ -1,31 +1,161 @@
+# DONE
+
 import psycopg2
 
 from models.base import Base
+from models.Database_file import db_start
 
 class Clients(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_database"
-
-    def get_client(self, client_id):
-        print("hi")
-        
-
-    def add_client(self, client):
-        client["created_at"] = self.get_timestamp()
-        client["updated_at"] = self.get_timestamp()
-        self.data.append(client)
-
-    def update_client(self, client_id, client):
-        client["updated_at"] = self.get_timestamp()
-        for i in range(len(self.data)):
-            if self.data[i]["id"] == client_id:
-                self.data[i] = client
-                break
-
-    def remove_client(self, client_id):
-        for x in self.data:
-            if x["id"] == client_id:
-                self.data.remove(x)
+        self.dbfile = "Cargohub_db"
+        self.db = db_start()
 
     def get_clients(self):
-        print("hi")
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # If connection fails, return None
+        cursor = conn.cursor()
+
+        query = "SELECT * FROM clients LIMIT 10"
+        cursor.execute(query)
+        clients = cursor.fetchall()  # Fetch a single row
+        
+        if clients is None:
+            print("No clients found")
+            return None
+
+        cursor.close()
+        conn.close()
+        return clients
+
+    def get_client(self, client_id):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # If connection fails, return None
+        cursor = conn.cursor()
+
+        query = "SELECT * FROM clients WHERE id = %s"
+        cursor.execute(query, (client_id,))
+        client = cursor.fetchone()  # Fetch a single row
+        
+        if client is None:
+            print(f"No client with id {client_id}")
+            return None
+
+        cursor.close()
+        conn.close()
+        return client
+        
+    def add_client(self, client):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # If connection fails, return None
+        cursor = conn.cursor()
+
+        client["created_at"] = self.get_timestamp()
+        client["updated_at"] = self.get_timestamp()
+        
+        query = f"""INSERT INTO clients (
+            id, name, address, city, zip_code, province, country, 
+            contact_name, contact_phone, contact_email, created_at, updated_at
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        
+        data = (
+            client['id'], 
+            client['name'], 
+            client['address'], 
+            client['city'], 
+            client['zip_code'], 
+            client['province'], 
+            client['country'], 
+            client['contact_name'], 
+            client['contact_phone'], 
+            client['contact_email'], 
+            client['created_at'],
+            client['updated_at'])
+        
+        cursor.execute(query, data)
+        conn.commit()
+
+        print(f"Client {client['name']} added successfully.")
+
+        cursor.close()
+        conn.close()
+
+    def update_client(self, client_id, client):
+        # Establish connection to the database
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
+        
+        try:
+            cursor = conn.cursor()
+
+            # Check if the client exists
+            cursor.execute("SELECT * FROM clients WHERE id = %s", (client_id,))
+            client_old = cursor.fetchone()
+            if client_old is None:
+                print("Client not found")
+                return None
+
+            # Define the update query with placeholders
+            update_query = """
+                UPDATE clients SET
+                    name = %s,
+                    address = %s,
+                    city = %s,
+                    zip_code = %s,
+                    province = %s,
+                    country = %s,
+                    contact_name = %s,
+                    contact_phone = %s,
+                    contact_email = %s,
+                    created_at = %s,
+                    updated_at = %s
+                WHERE id = %s
+            """
+
+            # Execute the update query
+            cursor.execute(update_query, (
+                client['name'],
+                client['address'],
+                client['city'],
+                client['zip_code'],
+                client['province'],
+                client['country'],
+                client['contact_name'],
+                client['contact_phone'],
+                client['contact_email'],
+                client['created_at'],
+                self.get_timestamp(),  # Assuming this method returns the current timestamp
+                client_id
+            ))
+
+            # Commit the changes to the database
+            conn.commit()
+            print("Client updated successfully.")
+            
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            conn.rollback()  # Rollback if any error occurs
+        finally:
+            cursor.close()
+            conn.close()
+
+    def remove_client(self, client_id):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # If connection fails, return None
+        cursor = conn.cursor()
+
+        query = f"DELETE FROM clients WHERE id = {client_id}"
+        cursor.execute(query)
+
+        conn.commit
+        cursor.close()
+        conn.close()

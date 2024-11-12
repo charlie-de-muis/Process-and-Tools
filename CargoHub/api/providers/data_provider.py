@@ -31,29 +31,29 @@ _clients = None
 
 def init():
     global _warehouses
-    _warehouses = Warehouses(ROOT_PATH, DEBUG)
+    _warehouses = Warehouses()
     global _locations
-    _locations = Locations(ROOT_PATH, DEBUG)
+    _locations = Locations()
     global _transfers
-    _transfers = Transfers(ROOT_PATH, DEBUG)
+    _transfers = Transfers()
     global _items
-    _items = Items(ROOT_PATH, DEBUG)
+    _items = Items()
     global _item_lines
-    _item_lines = ItemLines(ROOT_PATH, DEBUG)
+    _item_lines = ItemLines()
     global _item_groups
-    _item_groups = ItemGroups(ROOT_PATH, DEBUG)
+    _item_groups = ItemGroups()
     global _item_types
-    _item_types = ItemTypes(ROOT_PATH, DEBUG)
+    _item_types = ItemTypes()
     global _inventories
-    _inventories = Inventories(ROOT_PATH, DEBUG)
+    _inventories = Inventories()
     global _suppliers
-    _suppliers = Suppliers(ROOT_PATH, DEBUG)
+    _suppliers = Suppliers()
     global _orders
-    _orders = Orders(ROOT_PATH, DEBUG)
+    _orders = Orders()
     global _clients
     _clients = Clients()
     global _shipments
-    _shipments = Shipments(ROOT_PATH, DEBUG)
+    _shipments = Shipments()
 
 
 def fetch_warehouse_pool():

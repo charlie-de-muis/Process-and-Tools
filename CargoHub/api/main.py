@@ -319,12 +319,20 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                     self.end_headers()
                     self.wfile.write(json.dumps(clients).encode("utf-8"))
                 case 2:
-                    client_id = int(path[1])
+                    client_id = int(path[1])  # Assuming 'path' is a list of URL components
                     client = data_provider.fetch_client_pool().get_client(client_id)
-                    self.send_response(200)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps(client).encode("utf-8"))
+                    
+                    if client is None:
+                        self.send_response(404)  # Not Found
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "Client not found"}).encode("utf-8"))
+                    else:
+                        # Send 200 OK with client data in JSON format
+                        self.send_response(200)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps(client).encode("utf-8"))
                 case 3:
                     if path[2] == "orders":
                         client_id = int(path[1])
@@ -463,9 +471,9 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
             post_data = self.rfile.read(content_length)
             new_client = json.loads(post_data.decode())
             data_provider.fetch_client_pool().add_client(new_client)
-            data_provider.fetch_client_pool().save()
             self.send_response(201)
             self.end_headers()
+
         elif path[0] == "shipments":
             content_length = int(self.headers["Content-Length"])
             post_data = self.rfile.read(content_length)
@@ -775,7 +783,6 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
         elif path[0] == "clients":
             client_id = int(path[1])
             data_provider.fetch_client_pool().remove_client(client_id)
-            data_provider.fetch_client_pool().save()
             self.send_response(200)
             self.end_headers()
         elif path[0] == "shipments":

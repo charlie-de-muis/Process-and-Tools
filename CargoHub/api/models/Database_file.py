@@ -254,3 +254,18 @@ class db_start:
         except psycopg2.Error as error: 
             print(error)
             print("Database Cargohub_db not formed.")
+
+    def connection(self, database_name):
+        try:
+            conn = psycopg2.connect(
+                database=database_name,  
+                user="postgres",
+                password="admin",
+                host="localhost",
+                port=5432
+            )
+            conn.autocommit = True
+            return conn
+        except psycopg2.Error as error:
+            print(f"Error connecting to database {database_name}: {error}")
+            return None
