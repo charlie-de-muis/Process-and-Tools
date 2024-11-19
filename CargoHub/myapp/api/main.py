@@ -1,8 +1,7 @@
 import socketserver
 import http.server
 import json
-import psycopg2
-from psycopg2 import sql
+import sqlite3
 
 from providers import auth_provider
 from providers import data_provider
@@ -387,7 +386,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 if len(path) == 3:
                     self.send_response(200)
                     self.end_headers()
-                    self.wfile.write(b"OK")  # Send a simple "OK" response body
+                    self.wfile.write(b"Hello!")  # Send a simple "OK" response body
                 else:
                     # Check the user for other paths under api/v1
                     api_key = self.headers.get("API_KEY")
