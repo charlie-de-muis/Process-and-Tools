@@ -1,4 +1,4 @@
-import psycopg2
+import sqlite3
 
 from models.base import Base
 from models.Database_file import db_start

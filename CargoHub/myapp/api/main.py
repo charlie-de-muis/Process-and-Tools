@@ -380,20 +380,33 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
 
     def do_GET(self):
-        api_key = self.headers.get("API_KEY")
-        user = auth_provider.get_user(api_key)
-        if user == None:
-            self.send_response(401)
-            self.end_headers()
-        else:
-            try:
-                path = self.path.split("/")
-                if len(path) > 3 and path[1] == "api" and path[2] == "v1":
+        try:
+            path = self.path.split("/")
+            if len(path) >= 3 and path[1] == "api" and path[2] == "v1":
+                # If the path is exactly "api/v1", send a 200 OK response
+                if len(path) == 3:
+                    self.send_response(200)
+                    self.end_headers()
+                    self.wfile.write(b"OK")  # Send a simple "OK" response body
+                else:
+                    # Check the user for other paths under api/v1
+                    api_key = self.headers.get("API_KEY")
+                    user = auth_provider.get_user(api_key)
+                    if user is None:
+                        self.send_response(401)
+                        self.end_headers()
+                        return
+                    
+                    # Handle other api/v1 paths
                     self.handle_get_version_1(path[3:], user)
-            except Exception as e:
-                print(e)
-                self.send_response(500)
+            else:
+                # If the path does not match, send a 404 Not Found
+                self.send_response(404)
                 self.end_headers()
+        except Exception as e:
+            print(e)
+            self.send_response(500)
+            self.end_headers()
 
     def handle_post_version_1(self, path, user):
         if not auth_provider.has_access(user, path, "post"):
