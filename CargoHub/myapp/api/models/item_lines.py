@@ -1,91 +1,94 @@
-# DONE
+## DONE
 
-import psycopg2
+import sqlite3
 
 from models.base import Base
 from models.Database_file import db_start
 
-class Clients(Base):
+ITEM_LINES = []
+
+
+class Item_Lines(Base):
     def __init__(self):
         self.dbfile = "Cargohub_db"
         self.db = db_start()
 
-    def get_clients(self):
+    def get_item_lines(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM clients LIMIT 10"
+        query = "SELECT * FROM item_lines LIMIT 10"
         cursor.execute(query)
-        clients = cursor.fetchall()  # Fetch a single row
+        item_lines = cursor.fetchall()  # Fetch a single row
         
-        if clients is None:
-            print("No clients found")
+        if item_lines is None:
+            print("No item_lines found")
             return None
 
         cursor.close()
         conn.close()
-        return clients
+        return item_lines
 
-    def get_client(self, client_id):
+    def get_item_lines(self, item_lines_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM clients WHERE id = %s"
-        cursor.execute(query, (client_id,))
-        client = cursor.fetchone()  # Fetch a single row
+        query = "SELECT * FROM item_lines WHERE id = %s"
+        cursor.execute(query, (item_lines_id,))
+        item_line = cursor.fetchone()  # Fetch a single row
         
-        if client is None:
-            print(f"No client with id {client_id}")
+        if item_lines_id is None:
+            print(f"No item groups with id {item_lines_id}")
             return None
 
         cursor.close()
         conn.close()
-        return client
+        return item_line
         
-    def add_client(self, client):
+    def add_item_lines(self, item_line):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        client["created_at"] = self.get_timestamp()
-        client["updated_at"] = self.get_timestamp()
+        item_line["created_at"] = self.get_timestamp()
+        item_line["updated_at"] = self.get_timestamp()
         
-        query = f"""INSERT INTO clients (
+        query = f"""INSERT INTO item_lines (
             id, name, address, city, zip_code, province, country, 
             contact_name, contact_phone, contact_email, created_at, updated_at
         ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
         
         data = (
-            client['id'], 
-            client['name'], 
-            client['address'], 
-            client['city'], 
-            client['zip_code'], 
-            client['province'], 
-            client['country'], 
-            client['contact_name'], 
-            client['contact_phone'], 
-            client['contact_email'], 
-            client['created_at'],
-            client['updated_at'])
+            item_line['id'], 
+            item_line['name'], 
+            item_line['address'], 
+            item_line['city'], 
+            item_line['zip_code'], 
+            item_line['province'], 
+            item_line['country'], 
+            item_line['contact_name'], 
+            item_line['contact_phone'], 
+            item_line['contact_email'], 
+            item_line['created_at'],
+            item_line['updated_at'])
         
         cursor.execute(query, data)
         conn.commit()
 
-        print(f"Client {client['name']} added successfully.")
+        print(f"Item line {item_line['name']} added successfully.")
 
         cursor.close()
         conn.close()
 
-    def update_client(self, client_id, client):
+    def update_item_lines(self, item_line_id, item_line):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -96,15 +99,15 @@ class Clients(Base):
             cursor = conn.cursor()
 
             # Check if the client exists
-            cursor.execute("SELECT * FROM clients WHERE id = %s", (client_id,))
-            client_old = cursor.fetchone()
-            if client_old is None:
-                print("Client not found")
+            cursor.execute("SELECT * FROM item_lines WHERE id = %s", (item_line_id,))
+            item_line_old = cursor.fetchone()
+            if item_line_old is None:
+                print("Item line not found")
                 return None
 
             # Define the update query with placeholders
             update_query = """
-                UPDATE clients SET
+                UPDATE item_lines SET
                     name = %s,
                     address = %s,
                     city = %s,
@@ -121,23 +124,23 @@ class Clients(Base):
 
             # Execute the update query
             cursor.execute(update_query, (
-                client['name'],
-                client['address'],
-                client['city'],
-                client['zip_code'],
-                client['province'],
-                client['country'],
-                client['contact_name'],
-                client['contact_phone'],
-                client['contact_email'],
-                client['created_at'],
+                item_line['name'],
+                item_line['address'],
+                item_line['city'],
+                item_line['zip_code'],
+                item_line['province'],
+                item_line['country'],
+                item_line['contact_name'],
+                item_line['contact_phone'],
+                item_line['contact_email'],
+                item_line['created_at'],
                 self.get_timestamp(),  # Assuming this method returns the current timestamp
-                client_id
+                item_line_id
             ))
 
             # Commit the changes to the database
             conn.commit()
-            print("Client updated successfully.")
+            print("Item line updated successfully.")
             
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -146,14 +149,14 @@ class Clients(Base):
             cursor.close()
             conn.close()
 
-    def remove_client(self, client_id):
+    def remove_item_lines(self, item_line_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = f"DELETE FROM clients WHERE id = {client_id}"
+        query = f"DELETE FROM item_lines WHERE id = {item_line_id}"
         cursor.execute(query)
 
         conn.commit

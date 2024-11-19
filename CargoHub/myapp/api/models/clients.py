@@ -1,91 +1,91 @@
 # DONE
 
-import psycopg2
+import sqlite3
 
 from models.base import Base
 from models.Database_file import db_start
 
-class Warehouses(Base):
+class Clients(Base):
     def __init__(self):
         self.dbfile = "Cargohub_db"
         self.db = db_start()
 
-    def get_warehouses (self):
+    def get_clients(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM warehouses LIMIT 10"
+        query = "SELECT * FROM clients LIMIT 10"
         cursor.execute(query)
-        warehouses = cursor.fetchall()  # Fetch a single row
+        clients = cursor.fetchall()  # Fetch a single row
         
-        if warehouses is None:
-            print("No warehouses found")
+        if clients is None:
+            print("No clients found")
             return None
 
         cursor.close()
         conn.close()
-        return warehouses
+        return clients
 
-    def get_warehouse(self, warehouse_id):
+    def get_client(self, client_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM warehouses WHERE id = %s"
-        cursor.execute(query, (warehouse_id,))
-        warehouse = cursor.fetchone()  # Fetch a single row
+        query = "SELECT * FROM clients WHERE id = %s"
+        cursor.execute(query, (client_id,))
+        client = cursor.fetchone()  # Fetch a single row
         
-        if warehouse is None:
-            print(f"No warehouse with id {warehouse_id}")
+        if client is None:
+            print(f"No client with id {client_id}")
             return None
 
         cursor.close()
         conn.close()
-        return warehouse
+        return client
         
-    def add_warehouse(self, warehouse):
+    def add_client(self, client):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        warehouse["created_at"] = self.get_timestamp()
-        warehouse["updated_at"] = self.get_timestamp()
+        client["created_at"] = self.get_timestamp()
+        client["updated_at"] = self.get_timestamp()
         
-        query = f"""INSERT INTO warehouses (
-            id, code, name, address, zip, city, province, country, 
+        query = f"""INSERT INTO clients (
+            id, name, address, city, zip_code, province, country, 
             contact_name, contact_phone, contact_email, created_at, updated_at
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
         
         data = (
-            warehouse['code'],
-            warehouse['name'],
-            warehouse['address'],
-            warehouse['zip'],
-            warehouse['city'],
-            warehouse['province'],
-            warehouse['country'],
-            warehouse['contact_name'],
-            warehouse['contact_phone'],
-            warehouse['contact_email'],
-            warehouse['created_at'],
-            warehouse['updated_at'])
+            client['id'], 
+            client['name'], 
+            client['address'], 
+            client['city'], 
+            client['zip_code'], 
+            client['province'], 
+            client['country'], 
+            client['contact_name'], 
+            client['contact_phone'], 
+            client['contact_email'], 
+            client['created_at'],
+            client['updated_at'])
         
         cursor.execute(query, data)
         conn.commit()
 
-        print(f"Warehouse {warehouse['name']} added successfully.")
+        print(f"Client {client['name']} added successfully.")
 
         cursor.close()
         conn.close()
 
-    def update_warehouse(self, warehouse_id, warehouse):
+    def update_client(self, client_id, client):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -95,52 +95,49 @@ class Warehouses(Base):
         try:
             cursor = conn.cursor()
 
-            # Check if the warehouse exists
-            cursor.execute("SELECT * FROM warehouses WHERE id = %s", (warehouse_id,))
-            warehouse_old = cursor.fetchone()
-            if warehouse_old is None:
-                print("Warehouse not found")
+            # Check if the client exists
+            cursor.execute("SELECT * FROM clients WHERE id = %s", (client_id,))
+            client_old = cursor.fetchone()
+            if client_old is None:
+                print("Client not found")
                 return None
 
             # Define the update query with placeholders
             update_query = """
-                UPDATE Warehouses SET
-                    code = %s,
+                UPDATE clients SET
                     name = %s,
                     address = %s,
-                    zip = %s,
                     city = %s,
+                    zip_code = %s,
                     province = %s,
                     country = %s,
                     contact_name = %s,
                     contact_phone = %s,
-                    contact_email = %s
-                    created_at = %s
+                    contact_email = %s,
+                    created_at = %s,
                     updated_at = %s
                 WHERE id = %s
             """
 
             # Execute the update query
             cursor.execute(update_query, (
-                warehouse['code'],
-                warehouse['name'],
-                warehouse['address'],
-                warehouse['zip'],
-                warehouse['city'],
-                warehouse['province'],
-                warehouse['country'],
-                warehouse['contact_name'],
-                warehouse['contact_phone'],
-                warehouse['contact_email'],
-                warehouse['created_at'],
-                warehouse['updated_at'],
+                client['name'],
+                client['address'],
+                client['city'],
+                client['zip_code'],
+                client['province'],
+                client['country'],
+                client['contact_name'],
+                client['contact_phone'],
+                client['contact_email'],
+                client['created_at'],
                 self.get_timestamp(),  # Assuming this method returns the current timestamp
-                warehouse_id
+                client_id
             ))
 
             # Commit the changes to the database
             conn.commit()
-            print("Warehouse updated successfully.")
+            print("Client updated successfully.")
             
         except Exception as e:
             print(f"An error occurred: {e}")
@@ -149,14 +146,14 @@ class Warehouses(Base):
             cursor.close()
             conn.close()
 
-    def remove_warehouse (self, warehouse_id):
+    def remove_client(self, client_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = f"DELETE FROM warehouses WHERE id = {warehouse_id}"
+        query = f"DELETE FROM clients WHERE id = {client_id}"
         cursor.execute(query)
 
         conn.commit

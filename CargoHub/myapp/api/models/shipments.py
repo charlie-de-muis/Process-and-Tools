@@ -1,4 +1,4 @@
-import psycopg2
+import sqlite3
 
 from models.base import Base
 from providers import data_provider
