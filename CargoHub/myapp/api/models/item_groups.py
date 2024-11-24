@@ -39,7 +39,7 @@ class Item_Groups(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM item_groups WHERE id = %s"
+        query = "SELECT * FROM item_groups WHERE id = ?"
         cursor.execute(query, (item_groups_id,))
         item_group = cursor.fetchone()  # Fetch a single row
         
@@ -64,7 +64,7 @@ class Item_Groups(Base):
         query = f"""INSERT INTO item_groups (
             id, name, address, city, zip_code, province, country, 
             contact_name, contact_phone, contact_email, created_at, updated_at
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
         
         data = (
             item_group['id'], 
@@ -99,7 +99,7 @@ class Item_Groups(Base):
             cursor = conn.cursor()
 
             # Check if the client exists
-            cursor.execute("SELECT * FROM item_groups WHERE id = %s", (item_group_id,))
+            cursor.execute("SELECT * FROM item_groups WHERE id = ?", (item_group_id,))
             item_group_old = cursor.fetchone()
             if item_group_old is None:
                 print("Item group not found")
@@ -108,18 +108,18 @@ class Item_Groups(Base):
             # Define the update query with placeholders
             update_query = """
                 UPDATE item_groups SET
-                    name = %s,
-                    address = %s,
-                    city = %s,
-                    zip_code = %s,
-                    province = %s,
-                    country = %s,
-                    contact_name = %s,
-                    contact_phone = %s,
-                    contact_email = %s,
-                    created_at = %s,
-                    updated_at = %s
-                WHERE id = %s
+                    name = ?,
+                    address = ?,
+                    city = ?,
+                    zip_code = ?,
+                    province = ?,
+                    country = ?,
+                    contact_name = ?,
+                    contact_phone = ?,
+                    contact_email = ?,
+                    created_at = ?,
+                    updated_at = ?
+                WHERE id = ?
             """
 
             # Execute the update query

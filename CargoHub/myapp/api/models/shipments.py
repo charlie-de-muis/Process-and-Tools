@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 from models.base import Base
 from providers import data_provider
@@ -9,7 +10,7 @@ SHIPMENTS = []
 
 class Shipments(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
     def get_shipments(self):
@@ -38,7 +39,7 @@ class Shipments(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM shipments WHERE id = %s"
+        query = "SELECT * FROM shipments WHERE id = ?"
         cursor.execute(query, (shipment_id,))
         shipment = cursor.fetchone()  # Fetch a single row
         
@@ -61,7 +62,7 @@ class Shipments(Base):
 
             # Query the database for the shipment with the given shipment_id
             query = """
-                SELECT items FROM shipments WHERE id = %s
+                SELECT items FROM shipments WHERE id = ?
             """
             cursor.execute(query, (shipment_id,))
             shipment = cursor.fetchone()
@@ -98,10 +99,10 @@ class Shipments(Base):
                 id, order_id, source_id, order_date, request_date, shipment_date,
                 shipment_type, shipment_status, notes, carrier_code, carrier_description, 
                 service_code, payment_type, transfer_mode, total_package_count, 
-                total_package_weight, created_at, updated_at
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                total_package_weight, created_at, updated_at, items
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
-        
+        items = json.dumps(shipment['items'])
         # Map data to the shipment_query
         shipment_data = (
             shipment['id'],
@@ -121,18 +122,12 @@ class Shipments(Base):
             shipment['total_package_count'],
             shipment['total_package_weight'],
             shipment['created_at'],
-            shipment['updated_at']
+            shipment['updated_at'],
+            items
         )
 
         # Execute the INSERT query for the shipment
         cursor.execute(shipment_query, shipment_data)
-
-        # Insert shipment items in the `shipment_items` table
-        for item in shipment['items']:
-            item_query = """
-                INSERT INTO shipment_items (shipment_id, item_id, amount) VALUES (%s, %s, %s);
-            """
-            cursor.execute(item_query, (shipment['id'], item['item_id'], item['amount']))
 
         conn.commit()
         print(f"Shipment {shipment['id']} added successfully.")
@@ -150,7 +145,7 @@ class Shipments(Base):
             cursor = conn.cursor()
 
             # Check if the shipment exists
-            cursor.execute("SELECT * FROM shipments WHERE id = %s", (shipment_id,))
+            cursor.execute("SELECT * FROM shipments WHERE id = ?", (shipment_id,))
             shipment_old = cursor.fetchone()
             if shipment_old is None:
                 print("Shipment not found")
@@ -159,24 +154,24 @@ class Shipments(Base):
             # Define the update query for the shipments table
             update_shipment_query = """
                 UPDATE shipments SET
-                    order_id = %s,
-                    source_id = %s,
-                    order_date = %s,
-                    request_date = %s,
-                    shipment_date = %s,
-                    shipment_type = %s,
-                    shipment_status = %s,
-                    notes = %s,
-                    carrier_code = %s,
-                    carrier_description = %s,
-                    service_code = %s,
-                    payment_type = %s,
-                    transfer_mode = %s,
-                    total_package_count = %s,
-                    total_package_weight = %s,
-                    created_at = %s,
-                    updated_at = %s
-                WHERE id = %s;
+                    order_id = ?,
+                    source_id = ?,
+                    order_date = ?,
+                    request_date = ?,
+                    shipment_date = ?,
+                    shipment_type = ?,
+                    shipment_status = ?,
+                    notes = ?,
+                    carrier_code = ?,
+                    carrier_description = ?,
+                    service_code = ?,
+                    payment_type = ?,
+                    transfer_mode = ?,
+                    total_package_count = ?,
+                    total_package_weight = ?,
+                    created_at = ?,
+                    updated_at = ?
+                WHERE id = ?;
             """
 
             # Map data to the update_shipment_query
@@ -205,12 +200,12 @@ class Shipments(Base):
             cursor.execute(update_shipment_query, update_data)
 
             # Delete existing items for this shipment
-            cursor.execute("DELETE FROM shipment_items WHERE shipment_id = %s", (shipment_id,))
+            cursor.execute("DELETE FROM shipment_items WHERE shipment_id = ?", (shipment_id,))
 
             # Re-insert shipment items in the `shipment_items` table
             for item in shipment['items']:
                 item_query = """
-                    INSERT INTO shipment_items (shipment_id, item_id, amount) VALUES (%s, %s, %s);
+                    INSERT INTO shipment_items (shipment_id, item_id, amount) VALUES (?, ?, ?);
                 """
                 cursor.execute(item_query, (shipment_id, item['item_id'], item['amount']))
 
@@ -279,7 +274,7 @@ class Shipments(Base):
 
             # Update the shipment's items field in the database
             update_query = """
-                UPDATE shipments SET items = %s, updated_at = %s WHERE id = %s
+                UPDATE shipments SET items = ?, updated_at = ? WHERE id = ?
             """
             cursor.execute(update_query, (json.dumps(items), self.get_timestamp(), shipment_id))
             conn.commit()
@@ -304,6 +299,6 @@ class Shipments(Base):
         query = f"DELETE FROM shipments WHERE id = {shipment_id}"
         cursor.execute(query)
 
-        conn.commit
+        conn.commit()
         cursor.close()
         conn.close()

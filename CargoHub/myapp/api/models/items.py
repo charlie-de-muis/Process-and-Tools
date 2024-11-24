@@ -8,7 +8,7 @@ ITEMS = []
 # soort van klaar
 class Items(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
     def get_items(self):
@@ -37,12 +37,12 @@ class Items(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM items WHERE id = %s"
+        query = "SELECT * FROM items WHERE uid = ?"
         cursor.execute(query, (item_id,))
         item = cursor.fetchone()  # Fetch a single row
         
         if item is None:
-            print(f"No item with id {item_id}")
+            print(f"No item with uid {item_id}")
             return None
 
         cursor.close()
@@ -59,7 +59,7 @@ class Items(Base):
             cursor = conn.cursor()
 
             # Query to get items where item_line matches the given item_line_id
-            query = "SELECT * FROM items WHERE item_line = %s"
+            query = "SELECT * FROM items WHERE item_line = ?"
             cursor.execute(query, (item_line_id,))
             
             items = cursor.fetchall()  # Fetch all matching items
@@ -87,7 +87,7 @@ class Items(Base):
             cursor = conn.cursor()
 
             # Query to get items where item_group matches the given item_group_id
-            query = "SELECT * FROM items WHERE item_group = %s"
+            query = "SELECT * FROM items WHERE item_group = ?"
             cursor.execute(query, (item_group_id,))
             
             items = cursor.fetchall()  # Fetch all matching items
@@ -115,7 +115,7 @@ class Items(Base):
             cursor = conn.cursor()
 
             # Query to get items where item_type matches the given item_type_id
-            query = "SELECT * FROM items WHERE item_type = %s"
+            query = "SELECT * FROM items WHERE item_type = ?"
             cursor.execute(query, (item_type_id,))
             
             items = cursor.fetchall()  # Fetch all matching items
@@ -143,7 +143,7 @@ class Items(Base):
             cursor = conn.cursor()
 
             # Query to get items where supplier_id matches the given supplier_id
-            query = "SELECT * FROM items WHERE supplier_id = %s"
+            query = "SELECT * FROM items WHERE supplier_id = ?"
             cursor.execute(query, (supplier_id,))
             
             items = cursor.fetchall()  # Fetch all matching items
@@ -178,7 +178,7 @@ class Items(Base):
             commodity_code, item_line, item_group, item_type, unit_purchase_quantity,
             unit_order_quantity, pack_order_quantity, supplier_id, supplier_code,
             supplier_part_number, created_at, updated_at
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
 
         # Define the data tuple
         data = (
@@ -223,7 +223,7 @@ class Items(Base):
             cursor = conn.cursor()
 
             # Check if the item exists
-            cursor.execute("SELECT * FROM items WHERE uid = %s", (item_id,))
+            cursor.execute("SELECT * FROM items WHERE uid = ?", (item_id,))
             item_old = cursor.fetchone()
             if item_old is None:
                 print("Item not found")
@@ -232,24 +232,24 @@ class Items(Base):
             # Define the update query with placeholders
             update_query = """
                 UPDATE items SET
-                    code = %s,
-                    description = %s,
-                    short_description = %s,
-                    upc_code = %s,
-                    model_number = %s,
-                    commodity_code = %s,
-                    item_line = %s,
-                    item_group = %s,
-                    item_type = %s,
-                    unit_purchase_quantity = %s,
-                    unit_order_quantity = %s,
-                    pack_order_quantity = %s,
-                    supplier_id = %s,
-                    supplier_code = %s,
-                    supplier_part_number = %s,
-                    created_at = %s,
-                    updated_at = %s
-                WHERE uid = %s
+                    code = ?,
+                    description = ?,
+                    short_description = ?,
+                    upc_code = ?,
+                    model_number = ?,
+                    commodity_code = ?,
+                    item_line = ?,
+                    item_group = ?,
+                    item_type = ?,
+                    unit_purchase_quantity = ?,
+                    unit_order_quantity = ?,
+                    pack_order_quantity = ?,
+                    supplier_id = ?,
+                    supplier_code = ?,
+                    supplier_part_number = ?,
+                    created_at = ?,
+                    updated_at = ?
+                WHERE uid = ?
             """
 
             # Execute the update query
@@ -292,9 +292,10 @@ class Items(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = f"DELETE FROM items WHERE id = {item_id}"
-        cursor.execute(query)
+        query = f"DELETE FROM items WHERE uid = ?"
+        cursor.execute(query, (item_id,))
 
-        conn.commit
+        conn.commit()
         cursor.close()
         conn.close()
+

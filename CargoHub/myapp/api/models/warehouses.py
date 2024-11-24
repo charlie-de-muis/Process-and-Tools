@@ -1,13 +1,14 @@
 # DONE
 
 import sqlite3
+import json
 
 from models.base import Base
 from models.Database_file import db_start
 
 class Warehouses(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
     def get_warehouses (self):
@@ -36,7 +37,7 @@ class Warehouses(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM warehouses WHERE id = %s"
+        query = "SELECT * FROM warehouses WHERE id = ?"
         cursor.execute(query, (warehouse_id,))
         warehouse = cursor.fetchone()  # Fetch a single row
         
@@ -60,10 +61,11 @@ class Warehouses(Base):
         
         query = f"""INSERT INTO warehouses (
             id, code, name, address, zip, city, province, country, 
-            contact_name, contact_phone, contact_email, created_at, updated_at
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
-        
+            contact, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
+        contact = json.dumps(warehouse['contact'])
         data = (
+            warehouse['id'],
             warehouse['code'],
             warehouse['name'],
             warehouse['address'],
@@ -71,9 +73,7 @@ class Warehouses(Base):
             warehouse['city'],
             warehouse['province'],
             warehouse['country'],
-            warehouse['contact_name'],
-            warehouse['contact_phone'],
-            warehouse['contact_email'],
+            contact,
             warehouse['created_at'],
             warehouse['updated_at'])
         
@@ -96,7 +96,7 @@ class Warehouses(Base):
             cursor = conn.cursor()
 
             # Check if the warehouse exists
-            cursor.execute("SELECT * FROM warehouses WHERE id = %s", (warehouse_id,))
+            cursor.execute("SELECT * FROM warehouses WHERE id = ?", (warehouse_id,))
             warehouse_old = cursor.fetchone()
             if warehouse_old is None:
                 print("Warehouse not found")
@@ -105,19 +105,17 @@ class Warehouses(Base):
             # Define the update query with placeholders
             update_query = """
                 UPDATE Warehouses SET
-                    code = %s,
-                    name = %s,
-                    address = %s,
-                    zip = %s,
-                    city = %s,
-                    province = %s,
-                    country = %s,
-                    contact_name = %s,
-                    contact_phone = %s,
-                    contact_email = %s
-                    created_at = %s
-                    updated_at = %s
-                WHERE id = %s
+                    code = ?,
+                    name = ?,
+                    address = ?,
+                    zip = ?,
+                    city = ?,
+                    province = ?,
+                    country = ?,
+                    contact = ?
+                    created_at = ?
+                    updated_at = ?
+                WHERE id = ?
             """
 
             # Execute the update query
@@ -129,9 +127,7 @@ class Warehouses(Base):
                 warehouse['city'],
                 warehouse['province'],
                 warehouse['country'],
-                warehouse['contact_name'],
-                warehouse['contact_phone'],
-                warehouse['contact_email'],
+                warehouse['contact'],
                 warehouse['created_at'],
                 warehouse['updated_at'],
                 self.get_timestamp(),  # Assuming this method returns the current timestamp
@@ -159,6 +155,6 @@ class Warehouses(Base):
         query = f"DELETE FROM warehouses WHERE id = {warehouse_id}"
         cursor.execute(query)
 
-        conn.commit
+        conn.commit()
         cursor.close()
         conn.close()

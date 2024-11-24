@@ -8,7 +8,7 @@ LOCATIONS = []
 # grotendeels klaar
 class Locations(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
     def get_locations(self):
@@ -37,17 +37,25 @@ class Locations(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM locations WHERE id = %s"
-        cursor.execute(query, (location_id,))
-        location = cursor.fetchone()  # Fetch a single row
-        
-        if location is None:
-            print(f"No location with id {location_id}")
+        try:
+            # Use the correct placeholder "?" for SQLite
+            query = "SELECT * FROM locations WHERE id = ?"
+            cursor.execute(query, (location_id,))  # Pass the client_id as a tuple
+            location = cursor.fetchone()  # Fetch a single row
+            
+            if location is None:
+                print(f"No client with id {location_id}")
+                return None
+
+            return location
+
+        except sqlite3.DatabaseError as e:
+            print(f"Database error: {e}")
             return None
 
-        cursor.close()
-        conn.close()
-        return location
+        finally:
+            cursor.close()
+            conn.close()
 
     def get_locations_in_warehouse(self, warehouse_id):
         conn = self.db.connection(self.dbfile)
@@ -59,7 +67,7 @@ class Locations(Base):
             cursor = conn.cursor()
 
             # Query to get locations where warehouse_id matches the given warehouse_id
-            query = "SELECT * FROM locations WHERE warehouse_id = %s"
+            query = "SELECT * FROM locations WHERE warehouse_id = ?"
             cursor.execute(query, (warehouse_id,))
             
             locations = cursor.fetchall()  # Fetch all matching locations
@@ -91,7 +99,7 @@ class Locations(Base):
         # Define the INSERT query with placeholders
         query = f"""INSERT INTO locations (
             id, warehouse_id, code, name, created_at, updated_at
-        ) VALUES (%s, %s, %s, %s, %s, %s);"""
+        ) VALUES (?, ?, ?, ?, ?, ?);"""
 
         # Define the data tuple for location
         data = (
@@ -124,7 +132,7 @@ class Locations(Base):
             cursor = conn.cursor()
 
             # Check if the location exists
-            cursor.execute("SELECT * FROM locations WHERE id = %s", (location_id,))
+            cursor.execute("SELECT * FROM locations WHERE id = ?", (location_id,))
             location_old = cursor.fetchone()
             if location_old is None:
                 print("Location not found")
@@ -133,12 +141,12 @@ class Locations(Base):
             # Define the update query with placeholders
             update_query = """
                 UPDATE locations SET
-                    warehouse_id = %s,
-                    code = %s,
-                    name = %s,
-                    created_at = %s,
-                    updated_at = %s
-                WHERE id = %s
+                    warehouse_id = ?,
+                    code = ?,
+                    name = ?,
+                    created_at = ?,
+                    updated_at = ?
+                WHERE id = ?
             """
 
             # Execute the update query
@@ -169,9 +177,9 @@ class Locations(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = f"DELETE FROM clients WHERE id = {location_id}"
-        cursor.execute(query)
+        query = f"DELETE FROM locations WHERE id = ?"
+        cursor.execute(query, (location_id,))
 
-        conn.commit
+        conn.commit()
         cursor.close()
         conn.close()

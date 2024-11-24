@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 from models.base import Base
 from providers import data_provider
@@ -9,7 +10,7 @@ ORDERS = []
 
 class Orders(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
     def get_orders(self):
@@ -38,7 +39,7 @@ class Orders(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM orders WHERE id = %s"
+        query = "SELECT * FROM orders WHERE id = ?"
         cursor.execute(query, (order_id,))
         order = cursor.fetchone()  # Fetch a single row
         
@@ -60,7 +61,7 @@ class Orders(Base):
             cursor = conn.cursor()
 
             # Query to get the order by id
-            query = "SELECT items FROM orders WHERE id = %s"
+            query = "SELECT items FROM orders WHERE id = ?"
             cursor.execute(query, (order_id,))
 
             order = cursor.fetchone()  # Fetch the single order
@@ -88,7 +89,7 @@ class Orders(Base):
             cursor = conn.cursor()
 
             # Query to get all orders that belong to the given shipment_id
-            query = "SELECT id FROM orders WHERE shipment_id = %s"
+            query = "SELECT id FROM orders WHERE shipment_id = ?"
             cursor.execute(query, (shipment_id,))
 
             orders = cursor.fetchall()  # Fetch all orders for the shipment
@@ -117,7 +118,7 @@ class Orders(Base):
 
             # Query to get all orders where the client_id matches either 'ship_to' or 'bill_to'
             query = """
-                SELECT * FROM orders WHERE ship_to = %s OR bill_to = %s
+                SELECT * FROM orders WHERE ship_to = ? OR bill_to = ?
             """
             cursor.execute(query, (client_id, client_id))
 
@@ -140,10 +141,11 @@ class Orders(Base):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
-            return None
+            return None  # If connection fails, return None
+        
         cursor = conn.cursor()
 
-        # Set timestamps for creation and update
+        # Setting timestamps
         order["created_at"] = self.get_timestamp()
         order["updated_at"] = self.get_timestamp()
         
@@ -153,10 +155,10 @@ class Orders(Base):
                 id, source_id, order_date, request_date, reference, reference_extra, 
                 order_status, notes, shipping_notes, picking_notes, warehouse_id, 
                 ship_to, bill_to, shipment_id, total_amount, total_discount, 
-                total_tax, total_surcharge, created_at, updated_at
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+                total_tax, total_surcharge, created_at, updated_at, items
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
         """
-        
+        items = json.dumps(order['items'])
         # Map data to the order_query
         order_data = (
             order['id'],
@@ -178,20 +180,18 @@ class Orders(Base):
             order['total_tax'],
             order['total_surcharge'],
             order['created_at'],
-            order['updated_at']
+            order['updated_at'],
+            items
         )
 
-        # Execute the INSERT query for the order
-        cursor.execute(order_query, order_data)
+        try:
+            cursor.execute(order_query, order_data)
+            conn.commit()
 
-        # Insert order items in the `order_items` table
-        for item in order['items']:
-            item_query = """
-                INSERT INTO order_items (order_id, item_id, amount) VALUES (%s, %s, %s);
-            """
-            cursor.execute(item_query, (order['id'], item['item_id'], item['amount']))
+        except sqlite3.Error as e:
+            print(f"Error inserting inventory data: {e}")
+            return None
 
-        conn.commit()
         print(f"Order {order['reference']} added successfully.")
 
         cursor.close()
@@ -207,7 +207,7 @@ class Orders(Base):
             cursor = conn.cursor()
 
             # Check if the order exists
-            cursor.execute("SELECT * FROM orders WHERE id = %s", (order_id,))
+            cursor.execute("SELECT * FROM orders WHERE id = ?", (order_id,))
             order_old = cursor.fetchone()
             if order_old is None:
                 print("Order not found")
@@ -216,26 +216,26 @@ class Orders(Base):
             # Define the update query for the orders table
             update_order_query = """
                 UPDATE orders SET
-                    source_id = %s,
-                    order_date = %s,
-                    request_date = %s,
-                    reference = %s,
-                    reference_extra = %s,
-                    order_status = %s,
-                    notes = %s,
-                    shipping_notes = %s,
-                    picking_notes = %s,
-                    warehouse_id = %s,
-                    ship_to = %s,
-                    bill_to = %s,
-                    shipment_id = %s,
-                    total_amount = %s,
-                    total_discount = %s,
-                    total_tax = %s,
-                    total_surcharge = %s,
-                    created_at = %s,
-                    updated_at = %s
-                WHERE id = %s;
+                    source_id = ?,
+                    order_date = ?,
+                    request_date = ?,
+                    reference = ?,
+                    reference_extra = ?,
+                    order_status = ?,
+                    notes = ?,
+                    shipping_notes = ?,
+                    picking_notes = ?,
+                    warehouse_id = ?,
+                    ship_to = ?,
+                    bill_to = ?,
+                    shipment_id = ?,
+                    total_amount = ?,
+                    total_discount = ?,
+                    total_tax = ?,
+                    total_surcharge = ?,
+                    created_at = ?,
+                    updated_at = ?
+                WHERE id = ?;
             """
 
             # Map data to the update_order_query
@@ -266,12 +266,12 @@ class Orders(Base):
             cursor.execute(update_order_query, update_data)
 
             # Delete existing items for this order
-            cursor.execute("DELETE FROM order_items WHERE order_id = %s", (order_id,))
+            cursor.execute("DELETE FROM order_items WHERE order_id = ?", (order_id,))
 
             # Re-insert order items in the `order_items` table
             for item in order['items']:
                 item_query = """
-                    INSERT INTO order_items (order_id, item_id, amount) VALUES (%s, %s, %s);
+                    INSERT INTO order_items (order_id, item_id, amount) VALUES (?, ?, ?);
                 """
                 cursor.execute(item_query, (order_id, item['item_id'], item['amount']))
 
@@ -295,7 +295,7 @@ class Orders(Base):
             cursor = conn.cursor()
 
             # Get the current order's items from the database
-            query = "SELECT items FROM orders WHERE id = %s"
+            query = "SELECT items FROM orders WHERE id = ?"
             cursor.execute(query, (order_id,))
             order = cursor.fetchone()
 
@@ -345,7 +345,7 @@ class Orders(Base):
 
             # Update the order's items in the database
             update_query = """
-                UPDATE orders SET items = %s, updated_at = %s WHERE id = %s
+                UPDATE orders SET items = ?, updated_at = ? WHERE id = ?
             """
             cursor.execute(update_query, (json.dumps(items), self.get_timestamp(), order_id))
 
@@ -369,7 +369,7 @@ class Orders(Base):
             cursor = conn.cursor()
 
             # Get the current orders in the shipment
-            query = "SELECT id FROM orders WHERE shipment_id = %s"
+            query = "SELECT id FROM orders WHERE shipment_id = ?"
             cursor.execute(query, (shipment_id,))
             packed_orders = cursor.fetchall()
 
@@ -380,7 +380,7 @@ class Orders(Base):
                 if order_id not in orders:
                     # Set shipment_id to -1 and status to "Scheduled"
                     update_query = """
-                        UPDATE orders SET shipment_id = %s, order_status = %s WHERE id = %s
+                        UPDATE orders SET shipment_id = ?, order_status = ? WHERE id = ?
                     """
                     cursor.execute(update_query, (-1, "Scheduled", order_id))
 
@@ -389,7 +389,7 @@ class Orders(Base):
                 if order_id not in packed_order_ids:
                     # Set shipment_id to the new shipment and status to "Packed"
                     update_query = """
-                        UPDATE orders SET shipment_id = %s, order_status = %s WHERE id = %s
+                        UPDATE orders SET shipment_id = ?, order_status = ? WHERE id = ?
                     """
                     cursor.execute(update_query, (shipment_id, "Packed", order_id))
 
@@ -410,9 +410,9 @@ class Orders(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = f"DELETE FROM orders WHERE id = {order_id}"
-        cursor.execute(query)
+        query = f"DELETE FROM orders WHERE id = ?"
+        cursor.execute(query, (order_id,))
 
-        conn.commit
+        conn.commit()
         cursor.close()
         conn.close()

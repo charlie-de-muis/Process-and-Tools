@@ -1,14 +1,14 @@
 import sqlite3
+import json
 
 from models.base import Base
 from models.Database_file import db_start
 
 INVENTORIES = []
-# soort van klaar
 
 class Inventories(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
     def get_inventories(self):
@@ -37,17 +37,25 @@ class Inventories(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM inventories WHERE id = %s"
-        cursor.execute(query, (inventory_id,))
-        inventories = cursor.fetchone()  # Fetch a single row
-        
-        if inventories is None:
-            print(f"No inventory with id {inventory_id}")
+        try:
+            # Use the correct placeholder "?" for SQLite
+            query = "SELECT * FROM inventories WHERE id = ?"
+            cursor.execute(query, (inventory_id,))  # Pass the client_id as a tuple
+            inv = cursor.fetchone()  # Fetch a single row
+            
+            if inv is None:
+                print(f"No inventory with id {inventory_id}")
+                return None
+
+            return inv
+
+        except sqlite3.DatabaseError as e:
+            print(f"Database error: {e}")
             return None
 
-        cursor.close()
-        conn.close()
-        return inventories
+        finally:
+            cursor.close()
+            conn.close()
 
     def get_inventories_for_item(self, item_id):
         conn = self.db.connection(self.dbfile)
@@ -59,7 +67,7 @@ class Inventories(Base):
             cursor = conn.cursor()
 
             # Parameterized query to prevent SQL injection
-            query = "SELECT * FROM inventories WHERE item_id = %s"
+            query = "SELECT * FROM inventories WHERE item_id = ?"
             cursor.execute(query, (item_id,))
             
             inventories = cursor.fetchall()  # Fetch all records matching the item_id
@@ -97,7 +105,7 @@ class Inventories(Base):
             query = """
                 SELECT total_expected, total_ordered, total_allocated, total_available
                 FROM inventories
-                WHERE item_id = %s
+                WHERE item_id = ?
             """
             cursor.execute(query, (item_id,))
             
@@ -140,15 +148,16 @@ class Inventories(Base):
             id, item_id, description, item_reference, locations, 
             total_on_hand, total_expected, total_ordered, 
             total_allocated, total_available, created_at, updated_at
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
         
+        location = json.dumps(inventory['locations'])
         # Preparing the data tuple, including serializing locations as a JSON string
         data = (
             inventory['id'],
             inventory['item_id'],
             inventory['description'],
             inventory['item_reference'],
-            json.dumps(inventory['locations']),  # Store locations as JSON array
+            location,
             inventory['total_on_hand'],
             inventory['total_expected'],
             inventory['total_ordered'],
@@ -158,8 +167,12 @@ class Inventories(Base):
             inventory['updated_at']
         )
         
-        cursor.execute(query, data)
-        conn.commit()
+        try:
+            cursor.execute(query, data)
+            conn.commit()
+        except sqlite3.Error as e:
+            print(f"Error inserting inventory data: {e}")
+            return None
 
         print(f"Inventory item {inventory['item_id']} added successfully.")
 
@@ -177,7 +190,7 @@ class Inventories(Base):
             cursor = conn.cursor()
 
             # Check if the inventory item exists
-            cursor.execute("SELECT * FROM inventories WHERE id = %s", (inventory_id,))
+            cursor.execute("SELECT * FROM inventories WHERE id = ?", (inventory_id,))
             inventory_old = cursor.fetchone()
             if inventory_old is None:
                 print("Inventory item not found")
@@ -186,18 +199,18 @@ class Inventories(Base):
             # Define the update query with placeholders
             update_query = """
                 UPDATE inventories SET
-                    item_id = %s,
-                    description = %s,
-                    item_reference = %s,
-                    locations = %s,
-                    total_on_hand = %s,
-                    total_expected = %s,
-                    total_ordered = %s,
-                    total_allocated = %s,
-                    total_available = %s,
-                    created_at = %s,
-                    updated_at = %s
-                WHERE id = %s
+                    item_id = ?,
+                    description = ?,
+                    item_reference = ?,
+                    locations = ?,
+                    total_on_hand = ?,
+                    total_expected = ?,
+                    total_ordered = ?,
+                    total_allocated = ?,
+                    total_available = ?,
+                    created_at = ?,
+                    updated_at = ?
+                WHERE id = ?
             """
 
             # Prepare the data to be updated
@@ -240,6 +253,6 @@ class Inventories(Base):
         query = f"DELETE FROM inventories WHERE id = {inventory_id}"
         cursor.execute(query)
 
-        conn.commit
+        conn.commit()
         cursor.close()
         conn.close()

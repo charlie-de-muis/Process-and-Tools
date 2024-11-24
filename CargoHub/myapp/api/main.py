@@ -29,10 +29,17 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 case 2:
                     warehouse_id = int(path[1])
                     warehouse = data_provider.fetch_warehouse_pool().get_warehouse(warehouse_id)
-                    self.send_response(200)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps(warehouse).encode("utf-8"))
+                    if warehouse is None:
+                        self.send_response(404)  # Not Found
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "Warehouse not found"}).encode("utf-8"))
+                    else:
+                        # Send 200 OK with client data in JSON format
+                        self.send_response(200)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps(warehouse).encode("utf-8"))
                 case 3:
                     if path[2] == "locations":
                         warehouse_id = int(path[1])
@@ -59,10 +66,18 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 case 2:
                     location_id = int(path[1])
                     location = data_provider.fetch_location_pool().get_location(location_id)
-                    self.send_response(200)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps(location).encode("utf-8"))
+
+                    if location is None:
+                        self.send_response(404)  # Not Found
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "Location not found"}).encode("utf-8"))
+                    else:
+                        # Send 200 OK with client data in JSON format
+                        self.send_response(200)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps(location).encode("utf-8"))
                 case _:
                     self.send_response(404)
                     self.end_headers()
@@ -78,10 +93,17 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                     case 2:
                         transfer_id = int(path[1])
                         transfer = data_provider.fetch_transfer_pool().get_transfer(transfer_id)
-                        self.send_response(200)
-                        self.send_header("Content-type", "application/json")
-                        self.end_headers()
-                        self.wfile.write(json.dumps(transfer).encode("utf-8"))
+                        if transfer is None:
+                            self.send_response(404)  # Not Found
+                            self.send_header("Content-type", "application/json")
+                            self.end_headers()
+                            self.wfile.write(json.dumps({"error": "Transfer not found"}).encode("utf-8"))
+                        else:
+                            # Send 200 OK with client data in JSON format
+                            self.send_response(200)
+                            self.send_header("Content-type", "application/json")
+                            self.end_headers()
+                            self.wfile.write(json.dumps(transfer).encode("utf-8"))
                     case 3:
                         if path[2] == "items":
                             transfer_id = int(path[1])
@@ -108,10 +130,18 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                     case 2:
                         item_id = path[1]
                         item = data_provider.fetch_item_pool().get_item(item_id)
-                        self.send_response(200)
-                        self.send_header("Content-type", "application/json")
-                        self.end_headers()
-                        self.wfile.write(json.dumps(item).encode("utf-8"))
+
+                        if item is None:
+                            self.send_response(404)  # Not Found
+                            self.send_header("Content-type", "application/json")
+                            self.end_headers()
+                            self.wfile.write(json.dumps({"error": "Item not found"}).encode("utf-8"))
+                        else:
+                            # Send 200 OK with client data in JSON format
+                            self.send_response(200)
+                            self.send_header("Content-type", "application/json")
+                            self.end_headers()
+                            self.wfile.write(json.dumps(item).encode("utf-8"))
                     case 3:
                         if path[2] == "inventory":
                             item_id = path[1]
@@ -150,10 +180,17 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                     case 2:
                         item_line_id = int(path[1])
                         item_line = data_provider.fetch_item_line_pool().get_item_line(item_line_id)
-                        self.send_response(200)
-                        self.send_header("Content-type", "application/json")
-                        self.end_headers()
-                        self.wfile.write(json.dumps(item_line).encode("utf-8"))
+                        if item_line is None:
+                            self.send_response(404)  # Not Found
+                            self.send_header("Content-type", "application/json")
+                            self.end_headers()
+                            self.wfile.write(json.dumps({"error": "Item_line not found"}).encode("utf-8"))
+                        else:
+                            # Send 200 OK with client data in JSON format
+                            self.send_response(200)
+                            self.send_header("Content-type", "application/json")
+                            self.end_headers()
+                            self.wfile.write(json.dumps(item_line).encode("utf-8"))
                     case 3:
                         if path[2] == "items":
                             item_line_id = int(path[1])
@@ -181,10 +218,17 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 case 2:
                     item_group_id = int(path[1])
                     item_group = data_provider.fetch_item_group_pool().get_item_group(item_group_id)
-                    self.send_response(200)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps(item_group).encode("utf-8"))
+                    if item_group is None:
+                        self.send_response(404)  # Not Found
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "Item_group not found"}).encode("utf-8"))
+                    else:
+                        # Send 200 OK with client data in JSON format
+                        self.send_response(200)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps(item_group).encode("utf-8"))
                 case 3:
                     if path[2] == "items":
                         item_group_id = int(path[1])
@@ -212,10 +256,17 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 case 2:
                     item_type_id = int(path[1])
                     item_type = data_provider.fetch_item_type_pool().get_item_type(item_type_id)
-                    self.send_response(200)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps(item_type).encode("utf-8"))
+                    if item_type is None:
+                        self.send_response(404)  # Not Found
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "Item_type not found"}).encode("utf-8"))
+                    else:
+                        # Send 200 OK with client data in JSON format
+                        self.send_response(200)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps(item_type).encode("utf-8"))
                 case 3:
                     if path[2] == "items":
                         item_type_id = int(path[1])
@@ -234,11 +285,25 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
             paths = len(path)
             match paths:
                 case 1:
-                    inventories = data_provider.fetch_inventory_pool().get_inventories()
+                    inv = data_provider.fetch_inventory_pool().get_inventories()
                     self.send_response(200)
                     self.send_header("Content-type", "application/json")
                     self.end_headers()
-                    self.wfile.write(json.dumps(inventories).encode)
+                    self.wfile.write(json.dumps(inv).encode("utf-8"))
+                case 2:
+                    inv_id = int(path[1])  # Assuming 'path' is a list of URL components
+                    inv2 = data_provider.fetch_inventory_pool().get_inventory(inv_id)
+                    if inv2 is None:
+                        self.send_response(404)  # Not Found
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "Inventory not found"}).encode("utf-8"))
+                    else:
+                        # Send 200 OK with client data in JSON format
+                        self.send_response(200)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps(inv2).encode("utf-8"))
         elif path[0] == "suppliers":
             paths = len(path)
             match paths:
@@ -251,10 +316,17 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 case 2:
                     supplier_id = int(path[1])
                     supplier = data_provider.fetch_supplier_pool().get_supplier(supplier_id)
-                    self.send_response(200)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps(supplier).encode("utf-8"))
+                    if supplier is None:
+                        self.send_response(404)  # Not Found
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "Supplier not found"}).encode("utf-8"))
+                    else:
+                        # Send 200 OK with client data in JSON format
+                        self.send_response(200)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps(supplier).encode("utf-8"))
                 case 3:
                     if path[2] == "orders":
                         supplier_id = int(path[1])
@@ -281,10 +353,17 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 case 2:
                     order_id = int(path[1])
                     order = data_provider.fetch_order_pool().get_order(order_id)
-                    self.send_response(200)
-                    self.send_header("Content-type", "application/json")
-                    self.end_headers()
-                    self.wfile.write(json.dumps(order).encode("utf-8"))
+                    if order is None:
+                        self.send_response(404)  # Not Found
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps({"error": "Order not found"}).encode("utf-8"))
+                    else:
+                        # Send 200 OK with client data in JSON format
+                        self.send_response(200)
+                        self.send_header("Content-type", "application/json")
+                        self.end_headers()
+                        self.wfile.write(json.dumps(order).encode("utf-8"))
                 case 3:
                     if path[2] == "items":
                         order_id = int(path[1])
@@ -349,10 +428,17 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                     case 2:
                         shipment_id = int(path[1])
                         shipment = data_provider.fetch_shipment_pool().get_shipment(shipment_id)
-                        self.send_response(200)
-                        self.send_header("Content-type", "application/json")
-                        self.end_headers()
-                        self.wfile.write(json.dumps(shipment).encode("utf-8"))
+                        if shipment is None:
+                            self.send_response(404)  # Not Found
+                            self.send_header("Content-type", "application/json")
+                            self.end_headers()
+                            self.wfile.write(json.dumps({"error": "Shipment not found"}).encode("utf-8"))
+                        else:
+                            # Send 200 OK with client data in JSON format
+                            self.send_response(200)
+                            self.send_header("Content-type", "application/json")
+                            self.end_headers()
+                            self.wfile.write(json.dumps(shipment).encode("utf-8"))
                     case 3:
                         if path[2] == "orders":
                             shipment_id = int(path[1])
@@ -386,7 +472,7 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 if len(path) == 3:
                     self.send_response(200)
                     self.end_headers()
-                    self.wfile.write(b"Hello!")  # Send a simple "OK" response body
+                    self.wfile.write(b"OK")  # Send a simple "OK" response body
                 else:
                     # Check the user for other paths under api/v1
                     api_key = self.headers.get("API_KEY")
@@ -408,77 +494,85 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
             self.end_headers()
 
     def handle_post_version_1(self, path, user):
-        if not auth_provider.has_access(user, path, "post"):
-            self.send_response(403)
+        try:
+            if not auth_provider.has_access(user, path, "post"):
+                self.send_response(403)
+                self.end_headers()
+                return
+            if path[0] == "warehouses":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                new_warehouse = json.loads(post_data.decode())
+                data_provider.fetch_warehouse_pool().add_warehouse(new_warehouse)
+                self.send_response(201)
+                self.end_headers()
+            elif path[0] == "locations":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                new_location = json.loads(post_data.decode())
+                data_provider.fetch_location_pool().add_location(new_location)
+                self.send_response(201)
+                self.end_headers()
+            elif path[0] == "transfers":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                new_transfer = json.loads(post_data.decode())
+                data_provider.fetch_transfer_pool().add_transfer(new_transfer)
+                notification_processor.push(f"Scheduled batch transfer {new_transfer['id']}")
+                self.send_response(201)
+                self.end_headers()
+            elif path[0] == "items":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                new_item = json.loads(post_data.decode())
+                data_provider.fetch_item_pool().add_item(new_item)
+                self.send_response(201)
+                self.end_headers()
+            elif path[0] == "inventories":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                new_inventory = json.loads(post_data.decode())
+                data_provider.fetch_inventory_pool().add_inventory(new_inventory)
+                self.send_response(201)
+                self.end_headers()
+            elif path[0] == "suppliers":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                new_supplier = json.loads(post_data.decode())
+                data_provider.fetch_supplier_pool().add_supplier(new_supplier)
+                self.send_response(201)
+                self.end_headers()
+            elif path[0] == "orders":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                new_order = json.loads(post_data.decode())
+                data_provider.fetch_order_pool().add_order(new_order)
+                self.send_response(201)
+                self.end_headers()
+            elif path[0] == "clients":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                new_client = json.loads(post_data.decode())
+                data_provider.fetch_client_pool().add_client(new_client)
+                self.send_response(201)
+                self.end_headers()
+            elif path[0] == "shipments":
+                content_length = int(self.headers["Content-Length"])
+                post_data = self.rfile.read(content_length)
+                new_shipment = json.loads(post_data.decode())
+                data_provider.fetch_shipment_pool().add_shipment(new_shipment)
+                self.send_response(201)
+                self.end_headers()
+            else:
+                self.send_response(404)
+                self.end_headers()
+        except json.JSONDecodeError as jde:
+            print(f"JSON decoding error: {jde}")  # Debugging: log JSON issues
+            self.send_response(400)  # Bad request
             self.end_headers()
-            return
-        if path[0] == "warehouses":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            new_warehouse = json.loads(post_data.decode())
-            data_provider.fetch_warehouse_pool().add_warehouse(new_warehouse)
-            self.send_response(201)
-            self.end_headers()
-        elif path[0] == "locations":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            new_location = json.loads(post_data.decode())
-            data_provider.fetch_location_pool().add_location(new_location)
-            self.send_response(201)
-            self.end_headers()
-        elif path[0] == "transfers":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            new_transfer = json.loads(post_data.decode())
-            data_provider.fetch_transfer_pool().add_transfer(new_transfer)
-            notification_processor.push(f"Scheduled batch transfer {new_transfer['id']}")
-            self.send_response(201)
-            self.end_headers()
-        elif path[0] == "items":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            new_item = json.loads(post_data.decode())
-            data_provider.fetch_item_pool().add_item(new_item)
-            self.send_response(201)
-            self.end_headers()
-        elif path[0] == "inventories":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            new_inventory = json.loads(post_data.decode())
-            data_provider.fetch_inventory_pool().add_inventory(new_inventory)
-            self.send_response(201)
-            self.end_headers()
-        elif path[0] == "suppliers":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            new_supplier = json.loads(post_data.decode())
-            data_provider.fetch_supplier_pool().add_supplier(new_supplier)
-            self.send_response(201)
-            self.end_headers()
-        elif path[0] == "orders":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            new_order = json.loads(post_data.decode())
-            data_provider.fetch_order_pool().add_order(new_order)
-            self.send_response(201)
-            self.end_headers()
-        elif path[0] == "clients":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            new_client = json.loads(post_data.decode())
-            data_provider.fetch_client_pool().add_client(new_client)
-            self.send_response(201)
-            self.end_headers()
-
-        elif path[0] == "shipments":
-            content_length = int(self.headers["Content-Length"])
-            post_data = self.rfile.read(content_length)
-            new_shipment = json.loads(post_data.decode())
-            data_provider.fetch_shipment_pool().add_shipment(new_shipment)
-            self.send_response(201)
-            self.end_headers()
-        else:
-            self.send_response(404)
+        except Exception as e:
+            print(f"Error handling POST version 1: {e}")  # Log unexpected errors
+            self.send_response(500)
             self.end_headers()
 
     def do_POST(self):
@@ -773,7 +867,8 @@ class ApiRequestHandler(http.server.BaseHTTPRequestHandler):
                 path = self.path.split("/")
                 if len(path) > 3 and path[1] == "api" and path[2] == "v1":
                     self.handle_delete_version_1(path[3:], user)
-            except Exception:
+            except Exception as e:
+                print(e)
                 self.send_response(500)
                 self.end_headers()
 

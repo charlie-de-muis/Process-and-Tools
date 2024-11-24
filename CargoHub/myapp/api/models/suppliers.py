@@ -9,7 +9,7 @@ SUPPLIERS = []
 
 class Suppliers(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
     def get_suppliers (self):
@@ -38,7 +38,7 @@ class Suppliers(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM suppliers  WHERE id = %s"
+        query = "SELECT * FROM suppliers  WHERE id = ?"
         cursor.execute(query, (supplier_id,))
         supplier = cursor.fetchone()  # Fetch a single row
         
@@ -61,11 +61,12 @@ class Suppliers(Base):
         supplier["updated_at"] = self.get_timestamp()
         
         query = f"""INSERT INTO suppliers (
-            id, code, name, address, zip, city, province, country, 
-            contact_name, contact_phone, contact_email, created_at, updated_at
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+            id, code, name, address, address_extra, city, zip_code, province, country, 
+            contact_name, phonenumber, reference, created_at, updated_at
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
         
         data = (
+            supplier['id'],
             supplier['code'],
             supplier['name'],
             supplier['address'],
@@ -99,7 +100,7 @@ class Suppliers(Base):
             cursor = conn.cursor()
 
             # Check if the supplier exists
-            cursor.execute("SELECT * FROM suppliers WHERE id = %s", (supplier_id,))
+            cursor.execute("SELECT * FROM suppliers WHERE id = ?", (supplier_id,))
             supplier_old = cursor.fetchone()
             if supplier_old is None:
                 print("Supplier not found")
@@ -108,20 +109,20 @@ class Suppliers(Base):
             # Define the update query with placeholders
             update_query = """
                 UPDATE Suppliers SET
-                    code = %s,
-                    name = %s,
-                    address = %s,
-                    address_extra = %s,
-                    city = %s
-                    zip_code = %s
-                    province = %s
-                    country = %s
-                    contact_name = %s
-                    phonenumber = %s
-                    reference = %s
-                    created_at = %s
-                    updated_at = %s
-                WHERE id = %s
+                    code = ?,
+                    name = ?,
+                    address = ?,
+                    address_extra = ?,
+                    city = ?
+                    zip_code = ?
+                    province = ?
+                    country = ?
+                    contact_name = ?
+                    phonenumber = ?
+                    reference = ?
+                    created_at = ?
+                    updated_at = ?
+                WHERE id = ?
             """
 
             # Execute the update query
@@ -164,7 +165,7 @@ class Suppliers(Base):
         query = f"DELETE FROM suppliers WHERE id = {supplier_id}"
         cursor.execute(query)
 
-        conn.commit
+        conn.commit()
         cursor.close()
         conn.close()
 

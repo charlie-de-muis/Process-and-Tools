@@ -1,4 +1,5 @@
 import sqlite3
+import json
 
 class db_start:
     def create_database(self):
@@ -12,41 +13,42 @@ class db_start:
             create_table_clients = """
             CREATE TABLE IF NOT EXISTS clients (
                 id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
-                address TEXT NOT NULL,
-                city TEXT NOT NULL,
-                zip_code TEXT NOT NULL,
-                province TEXT NOT NULL,
-                country TEXT NOT NULL,
-                contact_name TEXT NOT NULL,
+                name TEXT,
+                address TEXT,
+                city TEXT,
+                zip_code TEXT,
+                province TEXT,
+                country TEXT,
+                contact_name TEXT,
                 contact_phone TEXT,
                 contact_email TEXT,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                created_at TEXT,
+                updated_at TEXT
             );
             """
 
             create_table_inventory = """
-            CREATE TABLE IF NOT EXISTS inventory (
+            CREATE TABLE IF NOT EXISTS inventories (
                 id INTEGER PRIMARY KEY,
-                item_id TEXT NOT NULL,
-                description TEXT NOT NULL,
+                item_id TEXT,
+                description TEXT,
                 item_reference TEXT,
-                total_on_hand INTEGER NOT NULL,
-                total_expected INTEGER NOT NULL,
-                total_ordered INTEGER NOT NULL,
-                total_allocated INTEGER NOT NULL,
-                total_available INTEGER NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                locations TEXT,
+                total_on_hand INTEGER,
+                total_expected INTEGER,
+                total_ordered INTEGER,
+                total_allocated INTEGER,
+                total_available INTEGER,
+                created_at TEXT,
+                updated_at TEXT
             );
             """
 
             create_table_items = """
             CREATE TABLE IF NOT EXISTS items (
                 uid TEXT PRIMARY KEY,
-                code TEXT NOT NULL,
-                description TEXT NOT NULL,
+                code TEXT,
+                description TEXT,
                 short_description TEXT,
                 upc_code TEXT,
                 model_number TEXT,
@@ -60,146 +62,147 @@ class db_start:
                 supplier_id INTEGER,
                 supplier_code TEXT,
                 supplier_part_number TEXT,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                created_at TEXT,
+                updated_at TEXT
             );
             """
 
             create_table_locations = """
             CREATE TABLE IF NOT EXISTS locations (
                 id INTEGER PRIMARY KEY,
-                warehouse_id INTEGER NOT NULL,
-                code TEXT NOT NULL,
-                name TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                warehouse_id INTEGER,
+                code TEXT,
+                name TEXT,
+                created_at TEXT,
+                updated_at TEXT
             );
             """
 
             create_table_orders = """
             CREATE TABLE IF NOT EXISTS orders (
                 id INTEGER PRIMARY KEY,
-                source_id INTEGER NOT NULL,
-                order_date TEXT NOT NULL,
-                request_date TEXT NOT NULL,
-                reference TEXT NOT NULL,
+                source_id INTEGER,
+                order_date TEXT,
+                request_date TEXT,
+                reference TEXT,
                 reference_extra TEXT,
-                order_status TEXT NOT NULL,
+                order_status TEXT,
                 notes TEXT,
                 shipping_notes TEXT,
                 picking_notes TEXT,
-                warehouse_id INTEGER NOT NULL,
+                warehouse_id INTEGERL,
                 ship_to TEXT,
                 bill_to TEXT,
-                shipment_id INTEGER NOT NULL,
-                total_amount REAL NOT NULL,
-                total_discount REAL NOT NULL,
-                total_tax REAL NOT NULL,
-                total_surcharge REAL NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                shipment_id INTEGER,
+                total_amount REAL,
+                total_discount REAL,
+                total_tax REAL,
+                total_surcharge REAL,
+                created_at TEXT,
+                updated_at TEXT,
+                items TEXT
             );
             """
 
             create_table_shipments = """
             CREATE TABLE IF NOT EXISTS shipments (
                 id INTEGER PRIMARY KEY,
-                order_id INTEGER NOT NULL,
-                source_id INTEGER NOT NULL,
-                order_date TEXT NOT NULL,
-                request_date TEXT NOT NULL,
-                shipment_date TEXT NOT NULL,
-                shipment_type TEXT NOT NULL,
-                shipment_status TEXT NOT NULL,
+                order_id INTEGER,
+                source_id INTEGER,
+                order_date TEXT,
+                request_date TEXT,
+                shipment_date TEXT,
+                shipment_type TEXT,
+                shipment_status TEXT,
                 notes TEXT,
-                carrier_code TEXT NOT NULL,
-                carrier_description TEXT NOT NULL,
-                service_code TEXT NOT NULL,
-                payment_type TEXT NOT NULL,
-                transfer_mode TEXT NOT NULL,
-                total_package_count INTEGER NOT NULL,
-                total_package_weight REAL NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                carrier_code TEXT,
+                carrier_description TEXT,
+                service_code TEXT,
+                payment_type TEXT,
+                transfer_mode TEXT,
+                total_package_count INTEGER,
+                total_package_weight REAL,
+                created_at TEXT,
+                updated_at TEXT,
+                items TEXT
             );
             """
 
             create_table_suppliers = """
             CREATE TABLE IF NOT EXISTS suppliers (
                 id INTEGER PRIMARY KEY,
-                code TEXT NOT NULL,
-                name TEXT NOT NULL,
-                address TEXT NOT NULL,
+                code TEXT,
+                name TEXT,
+                address TEXT,
                 address_extra TEXT,
-                city TEXT NOT NULL,
-                zip_code TEXT NOT NULL,
-                province TEXT NOT NULL,
-                country TEXT NOT NULL,
-                contact_name TEXT NOT NULL,
-                phonenumber TEXT NOT NULL,
-                reference TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                city TEXT,
+                zip_code TEXT,
+                province TEXT,
+                country TEXT,
+                contact_name TEXT,
+                phonenumber TEXT,
+                reference TEXT,
+                created_at TEXT,
+                updated_at TEXT
             );
             """
 
             create_table_transfers = """
             CREATE TABLE IF NOT EXISTS transfers (
                 id INTEGER PRIMARY KEY,
-                reference TEXT NOT NULL,
+                reference TEXT,
                 transfer_from TEXT,
-                transfer_to INTEGER NOT NULL,
-                transfer_status TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                transfer_to INTEGER,
+                transfer_status TEXT,
+                created_at TEXT,
+                updated_at TEXT,
+                items TEXT
             );
             """
 
             create_table_warehouses = """
             CREATE TABLE IF NOT EXISTS warehouses (
                 id INTEGER PRIMARY KEY,
-                code TEXT NOT NULL,
-                name TEXT NOT NULL,
-                address TEXT NOT NULL,
-                zip TEXT NOT NULL,
-                city TEXT NOT NULL,
-                province TEXT NOT NULL,
-                country TEXT NOT NULL,
-                contact_name TEXT NOT NULL,
-                contact_phone TEXT NOT NULL,
-                contact_email TEXT NOT NULL,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                code TEXT,
+                name TEXT,
+                address TEXT,
+                zip TEXT,
+                city TEXT,
+                province TEXT,
+                country TEXT,
+                contact TEXT,
+                created_at TEXT,
+                updated_at TEXT
             );
             """
 
             create_table_item_groups = """
             CREATE TABLE IF NOT EXISTS item_groups (
                 id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
+                name TEXT,
                 description TEXT,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                created_at TEXT,
+                updated_at TEXT
             );
             """
 
             create_table_item_lines = """
             CREATE TABLE IF NOT EXISTS item_lines (
                 id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
+                name TEXT,
                 description TEXT,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                created_at TEXT,
+                updated_at TEXT
             );
             """
 
             create_table_item_types = """
             CREATE TABLE IF NOT EXISTS item_types (
                 id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL,
+                name TEXT,
                 description TEXT,
-                created_at TEXT NOT NULL,
-                updated_at TEXT NOT NULL
+                created_at TEXT,
+                updated_at TEXT
             );
             """
 

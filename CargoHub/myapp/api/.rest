@@ -1,26 +1,60 @@
-POST http://localhost:3000/api/v1/clients
-API_KEY: a1b2c3d4e5 
+GET http://localhost:3000/api/v1
+
+
+
+####
+DELETE http://localhost:3000/api/v1/locations/100000
+API_KEY: a1b2c3d4e5
+####
+GET http://localhost:3000/api/v1/locations/100000
+API_KEY: a1b2c3d4e5
+####
+POST http://localhost:3000/api/v1/locations
+API_KEY: a1b2c3d4e5
 Content-Type: application/json
 
 {
-        "id": 1, 
-        "name": "Raymond Inc", 
-        "address": "1296 Daniel Road Apt. 349", 
-        "city": "Pierceview", 
-        "zip_code": "28301", 
-        "province": "Colorado", 
-        "country": "United States", 
-        "contact_name": "Bryan Clark", 
-        "contact_phone": "242.732.3483x2573", 
-        "contact_email": "robertcharles@example.net", 
-        "created_at": "2010-04-28 02:22:53", 
-        "updated_at": "2022-02-09 20:22:35"
-}
-####
-GET http://localhost:3000/api/v1
+        "id": 100000,
+        "warehouse_id": 1,
+        "code": "A.1.0",
+        "name": "Row: A, Rack: 1, Shelf: 0",
+        "created_at": "1992-05-15 03:21:32",
+        "updated_at": "1992-05-15 03:21:32"
+    }
 
 ####
-DELETE http://localhost:3000/api/v1/clients/1
+POST http://localhost:3000/api/v1/inventories
+API_KEY: a1b2c3d4e5
+Content-Type: application/json
+
+{
+        "id": 100000,
+        "item_id": "P000001",
+        "description": "Face-to-face clear-thinking complexity",
+        "item_reference": "sjQ23408K",
+        "locations": [
+            3211,
+            24700,
+            14123,
+            19538,
+            31071,
+            24701,
+            11606,
+            11817
+        ],
+        "total_on_hand": 262,
+        "total_expected": 0,
+        "total_ordered": 80,
+        "total_allocated": 41,
+        "total_available": 141,
+        "created_at": "2015-02-19 16:08:24",
+        "updated_at": "2015-09-26 06:37:56"
+    }
+####
+DELETE http://localhost:3000/api/v1/inventories/100000
+API_KEY: a1b2c3d4e5
+####
+GET http://localhost:3000/api/v1/inventories/100000
 API_KEY: a1b2c3d4e5
 // "Clients" in dit geval kan vervangen door warehouses of andere categorieen.
 // "1" is het id van de client

@@ -1,6 +1,7 @@
 # DONE
 
 import sqlite3
+import json
 
 from models.base import Base
 from models.Database_file import db_start
@@ -9,7 +10,7 @@ TRANSFERS = []
 
 class Transfers(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
     def get_transfers (self):
@@ -38,7 +39,7 @@ class Transfers(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM transfers  WHERE id = %s"
+        query = "SELECT * FROM transfers  WHERE id = ?"
         cursor.execute(query, (transfer_id,))
         transfer = cursor.fetchone()  # Fetch a single row
         
@@ -61,7 +62,7 @@ class Transfers(Base):
 
             # Query to fetch the transfer details along with its items
             query = """
-                SELECT items FROM transfers WHERE id = %s
+                SELECT items FROM transfers WHERE id = ?
             """
             cursor.execute(query, (transfer_id,))
 
@@ -96,24 +97,24 @@ class Transfers(Base):
         transfer["updated_at"] = self.get_timestamp()
         
         query = f"""INSERT INTO transfers (
-            id, code, name, address, zip, city, province, country, 
-            contact_name, contact_phone, contact_email, created_at, updated_at
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+            id, reference, transfer_from, transfer_to, transfer_status, created_at, updated_at, items
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?);"""
         
+        items = json.dumps(transfer['items'])
         data = (
+            transfer['id'],
             transfer['reference'],
             transfer['transfer_from'],
             transfer['transfer_to'],
             transfer['transfer_status'],
             transfer['created_at'],
             transfer['updated_at'],
-            transfer['items_item_id'],
-            transfer['items_amount'])
+            items)
         
         cursor.execute(query, data)
         conn.commit()
 
-        print(f"Transfer {transfer['name']} added successfully.")
+        print(f"Transfer {transfer['reference']} added successfully.")
 
         cursor.close()
         conn.close()
@@ -129,7 +130,7 @@ class Transfers(Base):
             cursor = conn.cursor()
 
             # Check if the transfer exists
-            cursor.execute("SELECT * FROM transfers WHERE id = %s", (transfer_id,))
+            cursor.execute("SELECT * FROM transfers WHERE id = ?", (transfer_id,))
             transfer_old = cursor.fetchone()
             if transfer_old is None:
                 print("Transfer not found")
@@ -138,15 +139,15 @@ class Transfers(Base):
             # Define the update query with placeholders
             update_query = """
                 UPDATE Transfers SET
-                    reference = %s,
-                    transfer_from = %s,
-                    transfer_to = %s,
-                    transfer_status = %s,
-                    created_at = %s
-                    updated_at = %s
-                    items_item_id = %s
-                    items_amount = %s
-                WHERE id = %s
+                    reference = ?,
+                    transfer_from = ?,
+                    transfer_to = ?,
+                    transfer_status = ?,
+                    created_at = ?
+                    updated_at = ?
+                    items_item_id = ?
+                    items_amount = ?
+                WHERE id = ?
             """
 
             # Execute the update query
@@ -184,7 +185,7 @@ class Transfers(Base):
         query = f"DELETE FROM transfers WHERE id = {transfer_id}"
         cursor.execute(query)
 
-        conn.commit
+        conn.commit()
         cursor.close()
         conn.close()
 

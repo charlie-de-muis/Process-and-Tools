@@ -7,7 +7,7 @@ from models.Database_file import db_start
 
 class Clients(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
     def get_clients(self):
@@ -36,17 +36,25 @@ class Clients(Base):
             return None  # If connection fails, return None
         cursor = conn.cursor()
 
-        query = "SELECT * FROM clients WHERE id = %s"
-        cursor.execute(query, (client_id,))
-        client = cursor.fetchone()  # Fetch a single row
-        
-        if client is None:
-            print(f"No client with id {client_id}")
+        try:
+            # Use the correct placeholder "?" for SQLite
+            query = "SELECT * FROM clients WHERE id = ?"
+            cursor.execute(query, (client_id,))  # Pass the client_id as a tuple
+            client = cursor.fetchone()  # Fetch a single row
+            
+            if client is None:
+                print(f"No client with id {client_id}")
+                return None
+
+            return client
+
+        except sqlite3.DatabaseError as e:
+            print(f"Database error: {e}")
             return None
 
-        cursor.close()
-        conn.close()
-        return client
+        finally:
+            cursor.close()
+            conn.close()
         
     def add_client(self, client):
         conn = self.db.connection(self.dbfile)
@@ -61,7 +69,7 @@ class Clients(Base):
         query = f"""INSERT INTO clients (
             id, name, address, city, zip_code, province, country, 
             contact_name, contact_phone, contact_email, created_at, updated_at
-        ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);"""
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
         
         data = (
             client['id'], 
@@ -96,7 +104,7 @@ class Clients(Base):
             cursor = conn.cursor()
 
             # Check if the client exists
-            cursor.execute("SELECT * FROM clients WHERE id = %s", (client_id,))
+            cursor.execute("SELECT * FROM clients WHERE id = ?", (client_id,))
             client_old = cursor.fetchone()
             if client_old is None:
                 print("Client not found")
@@ -105,18 +113,18 @@ class Clients(Base):
             # Define the update query with placeholders
             update_query = """
                 UPDATE clients SET
-                    name = %s,
-                    address = %s,
-                    city = %s,
-                    zip_code = %s,
-                    province = %s,
-                    country = %s,
-                    contact_name = %s,
-                    contact_phone = %s,
-                    contact_email = %s,
-                    created_at = %s,
-                    updated_at = %s
-                WHERE id = %s
+                    name = ?,
+                    address = ?,
+                    city = ?,
+                    zip_code = ?,
+                    province = ?,
+                    country = ?,
+                    contact_name = ?,
+                    contact_phone = ?,
+                    contact_email = ?,
+                    created_at = ?,
+                    updated_at = ?
+                WHERE id = ?
             """
 
             # Execute the update query
@@ -156,6 +164,6 @@ class Clients(Base):
         query = f"DELETE FROM clients WHERE id = {client_id}"
         cursor.execute(query)
 
-        conn.commit
+        conn.commit()
         cursor.close()
         conn.close()
