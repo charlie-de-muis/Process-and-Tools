@@ -2,18 +2,18 @@
 
 import sqlite3
 
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 ITEM_TYPES = []
 
 
 class Item_Types(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_item_types(self):
+    def gets(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -32,7 +32,7 @@ class Item_Types(Base):
         conn.close()
         return item_types
 
-    def get_item_types(self, item_types_id):
+    def get(self, item_types_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -49,9 +49,9 @@ class Item_Types(Base):
 
         cursor.close()
         conn.close()
-        return item_type
+        return self.convert_to_dict(item_type)
         
-    def add_item_types(self, item_type):
+    def add(self, item_type):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -88,7 +88,7 @@ class Item_Types(Base):
         cursor.close()
         conn.close()
 
-    def update_item_types(self, item_type_id, item_type):
+    def update(self, item_type_id, item_type):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -149,7 +149,7 @@ class Item_Types(Base):
             cursor.close()
             conn.close()
 
-    def remove_item_types(self, item_type_id):
+    def remove(self, item_type_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -162,3 +162,16 @@ class Item_Types(Base):
         conn.commit
         cursor.close()
         conn.close()
+
+    def convert_to_dict(self, item_type):
+        """
+        Converts an item_type tuple fetched from the database into a dictionary
+        with the structure of the given JSON.
+        """
+        return {
+            'id': item_type[0],  # ID of the item type
+            'name': item_type[1],  # Name of the item type
+            'description': item_type[2],  # Description of the item type
+            'created_at': item_type[3],  # Creation timestamp
+            'updated_at': item_type[4]  # Update timestamp
+        }

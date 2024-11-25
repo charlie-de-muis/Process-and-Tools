@@ -1,7 +1,7 @@
 import sqlite3
 
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 ITEMS = []
 
@@ -11,7 +11,7 @@ class Items(Base):
         self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_items(self):
+    def gets(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -30,7 +30,7 @@ class Items(Base):
         conn.close()
         return items
 
-    def get_item(self, item_id):
+    def get(self, item_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -47,121 +47,121 @@ class Items(Base):
 
         cursor.close()
         conn.close()
-        return item
+        return self.convert_to_dict(item)
 
-    def get_items_for_item_line(self, item_line_id):
-        conn = self.db.connection(self.dbfile)
-        if conn is None:
-            print("DB connection failed")
-            return None  # Exit if connection fails
+    # def get_items_for_item_line(self, item_line_id):
+    #     conn = self.db.connection(self.dbfile)
+    #     if conn is None:
+    #         print("DB connection failed")
+    #         return None  # Exit if connection fails
         
-        try:
-            cursor = conn.cursor()
+    #     try:
+    #         cursor = conn.cursor()
 
-            # Query to get items where item_line matches the given item_line_id
-            query = "SELECT * FROM items WHERE item_line = ?"
-            cursor.execute(query, (item_line_id,))
+    #         # Query to get items where item_line matches the given item_line_id
+    #         query = "SELECT * FROM items WHERE item_line = ?"
+    #         cursor.execute(query, (item_line_id,))
             
-            items = cursor.fetchall()  # Fetch all matching items
+    #         items = cursor.fetchall()  # Fetch all matching items
 
-            if not items:
-                print(f"No items found for item_line_id {item_line_id}")
-                return []  # Return an empty list if no items are found
+    #         if not items:
+    #             print(f"No items found for item_line_id {item_line_id}")
+    #             return []  # Return an empty list if no items are found
 
-            return items  # Return the list of items
+    #         return items  # Return the list of items
         
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
-        finally:
-            cursor.close()
-            conn.close()
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
+    #         return None
+    #     finally:
+    #         cursor.close()
+    #         conn.close()
 
-    def get_items_for_item_group(self, item_group_id):
-        conn = self.db.connection(self.dbfile)
-        if conn is None:
-            print("DB connection failed")
-            return None  # Exit if connection fails
+    # def get_items_for_item_group(self, item_group_id):
+    #     conn = self.db.connection(self.dbfile)
+    #     if conn is None:
+    #         print("DB connection failed")
+    #         return None  # Exit if connection fails
         
-        try:
-            cursor = conn.cursor()
+    #     try:
+    #         cursor = conn.cursor()
 
-            # Query to get items where item_group matches the given item_group_id
-            query = "SELECT * FROM items WHERE item_group = ?"
-            cursor.execute(query, (item_group_id,))
+    #         # Query to get items where item_group matches the given item_group_id
+    #         query = "SELECT * FROM items WHERE item_group = ?"
+    #         cursor.execute(query, (item_group_id,))
             
-            items = cursor.fetchall()  # Fetch all matching items
+    #         items = cursor.fetchall()  # Fetch all matching items
 
-            if not items:
-                print(f"No items found for item_group_id {item_group_id}")
-                return []  # Return an empty list if no items are found
+    #         if not items:
+    #             print(f"No items found for item_group_id {item_group_id}")
+    #             return []  # Return an empty list if no items are found
 
-            return items  # Return the list of items
+    #         return items  # Return the list of items
         
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
-        finally:
-            cursor.close()
-            conn.close()
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
+    #         return None
+    #     finally:
+    #         cursor.close()
+    #         conn.close()
 
-    def get_items_for_item_type(self, item_type_id):
-        conn = self.db.connection(self.dbfile)
-        if conn is None:
-            print("DB connection failed")
-            return None  # Exit if connection fails
+    # def get_items_for_item_type(self, item_type_id):
+    #     conn = self.db.connection(self.dbfile)
+    #     if conn is None:
+    #         print("DB connection failed")
+    #         return None  # Exit if connection fails
         
-        try:
-            cursor = conn.cursor()
+    #     try:
+    #         cursor = conn.cursor()
 
-            # Query to get items where item_type matches the given item_type_id
-            query = "SELECT * FROM items WHERE item_type = ?"
-            cursor.execute(query, (item_type_id,))
+    #         # Query to get items where item_type matches the given item_type_id
+    #         query = "SELECT * FROM items WHERE item_type = ?"
+    #         cursor.execute(query, (item_type_id,))
             
-            items = cursor.fetchall()  # Fetch all matching items
+    #         items = cursor.fetchall()  # Fetch all matching items
 
-            if not items:
-                print(f"No items found for item_type_id {item_type_id}")
-                return []  # Return an empty list if no items are found
+    #         if not items:
+    #             print(f"No items found for item_type_id {item_type_id}")
+    #             return []  # Return an empty list if no items are found
 
-            return items  # Return the list of items
+    #         return items  # Return the list of items
         
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
-        finally:
-            cursor.close()
-            conn.close()
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
+    #         return None
+    #     finally:
+    #         cursor.close()
+    #         conn.close()
 
-    def get_items_for_supplier(self, supplier_id):
-        conn = self.db.connection(self.dbfile)
-        if conn is None:
-            print("DB connection failed")
-            return None  # Exit if connection fails
+    # def get_items_for_supplier(self, supplier_id):
+    #     conn = self.db.connection(self.dbfile)
+    #     if conn is None:
+    #         print("DB connection failed")
+    #         return None  # Exit if connection fails
         
-        try:
-            cursor = conn.cursor()
+    #     try:
+    #         cursor = conn.cursor()
 
-            # Query to get items where supplier_id matches the given supplier_id
-            query = "SELECT * FROM items WHERE supplier_id = ?"
-            cursor.execute(query, (supplier_id,))
+    #         # Query to get items where supplier_id matches the given supplier_id
+    #         query = "SELECT * FROM items WHERE supplier_id = ?"
+    #         cursor.execute(query, (supplier_id,))
             
-            items = cursor.fetchall()  # Fetch all matching items
+    #         items = cursor.fetchall()  # Fetch all matching items
 
-            if not items:
-                print(f"No items found for supplier_id {supplier_id}")
-                return []  # Return an empty list if no items are found
+    #         if not items:
+    #             print(f"No items found for supplier_id {supplier_id}")
+    #             return []  # Return an empty list if no items are found
 
-            return items  # Return the list of items
+    #         return items  # Return the list of items
         
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
-        finally:
-            cursor.close()
-            conn.close()
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
+    #         return None
+    #     finally:
+    #         cursor.close()
+    #         conn.close()
 
-    def add_item(self, item):
+    def add(self, item):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -212,7 +212,7 @@ class Items(Base):
         cursor.close()
         conn.close()
 
-    def update_item(self, item_id, item):
+    def update(self, item_id, item):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -285,7 +285,7 @@ class Items(Base):
             cursor.close()
             conn.close()
 
-    def remove_item(self, item_id):
+    def remove(self, item_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -299,3 +299,28 @@ class Items(Base):
         cursor.close()
         conn.close()
 
+    def convert_to_dict(self, item):
+        """
+        Converts an item tuple fetched from the database into a dictionary
+        with the structure of the given JSON.
+        """
+        return {
+            'uid': item[0],  # Unique identifier for the item
+            'code': item[1],  # Item code
+            'description': item[2],  # Full description of the item
+            'short_description': item[3],  # Short description of the item
+            'upc_code': item[4],  # UPC code for the item
+            'model_number': item[5],  # Model number of the item
+            'commodity_code': item[6],  # Commodity code of the item
+            'item_line': item[7],  # Item line number
+            'item_group': item[8],  # ID of the associated item group
+            'item_type': item[9],  # ID of the associated item type
+            'unit_purchase_quantity': item[10],  # Quantity of item purchased per unit
+            'unit_order_quantity': item[11],  # Quantity of item ordered per unit
+            'pack_order_quantity': item[12],  # Pack order quantity
+            'supplier_id': item[13],  # ID of the supplier
+            'supplier_code': item[14],  # Supplier code
+            'supplier_part_number': item[15],  # Supplier part number
+            'created_at': item[16],  # Timestamp of when the item was created
+            'updated_at': item[17],  # Timestamp of when the item was last updated
+        }

@@ -3,8 +3,8 @@
 import sqlite3
 import json
 
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 TRANSFERS = []
 
@@ -13,7 +13,7 @@ class Transfers(Base):
         self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_transfers (self):
+    def gets (self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -32,7 +32,7 @@ class Transfers(Base):
         conn.close()
         return transfers
 
-    def get_transfer(self, transfer_id):
+    def get(self, transfer_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -49,44 +49,44 @@ class Transfers(Base):
 
         cursor.close()
         conn.close()
-        return transfer
+        return self.convert_to_dict(transfer)
         
-    def get_items_in_transfer(self, transfer_id):
-        conn = self.db.connection(self.dbfile)
-        if conn is None:
-            print("DB connection failed")
-            return None  # Exit if connection fails
+    # def get_items_in_transfer(self, transfer_id):
+        # conn = self.db.connection(self.dbfile)
+        # if conn is None:
+        #     print("DB connection failed")
+        #     return None  # Exit if connection fails
 
-        try:
-            cursor = conn.cursor()
+        # try:
+        #     cursor = conn.cursor()
 
-            # Query to fetch the transfer details along with its items
-            query = """
-                SELECT items FROM transfers WHERE id = ?
-            """
-            cursor.execute(query, (transfer_id,))
+        #     # Query to fetch the transfer details along with its items
+        #     query = """
+        #         SELECT items FROM transfers WHERE id = ?
+        #     """
+        #     cursor.execute(query, (transfer_id,))
 
-            # Fetch the result
-            result = cursor.fetchone()
+        #     # Fetch the result
+        #     result = cursor.fetchone()
 
-            if result is None:
-                print(f"Transfer with id {transfer_id} not found")
-                return None
+        #     if result is None:
+        #         print(f"Transfer with id {transfer_id} not found")
+        #         return None
 
-            # Assuming items is a JSON column in the 'transfers' table
-            items = result[0]  # Extract the items from the result
+        #     # Assuming items is a JSON column in the 'transfers' table
+        #     items = result[0]  # Extract the items from the result
 
-            return items
+        #     return items
 
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None  # Return None in case of any error
+        # except Exception as e:
+        #     print(f"An error occurred: {e}")
+        #     return None  # Return None in case of any error
 
-        finally:
-            cursor.close()
-            conn.close()
+        # finally:
+        #     cursor.close()
+        #     conn.close()
 
-    def add_transfer(self, transfer):
+    def add(self, transfer):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -119,7 +119,7 @@ class Transfers(Base):
         cursor.close()
         conn.close()
 
-    def update_transfer(self, transfer_id, transfer):
+    def update(self, transfer_id, transfer):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -175,7 +175,7 @@ class Transfers(Base):
             cursor.close()
             conn.close()
 
-    def remove_transfer (self, transfer_id):
+    def remove(self, transfer_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -189,3 +189,25 @@ class Transfers(Base):
         cursor.close()
         conn.close()
 
+    def convert_to_dict(self, transfer):
+        """
+        Converts a transfer tuple fetched from the database into a dictionary
+        with the structure of the given JSON.
+        """
+        # If 'items' is a JSON string, you may want to convert it back to a list (assumed)
+        items = transfer[7]
+        if items:
+            items = json.loads(items)  # If 'items' is a JSON string, parse it as a list
+        else:
+            items = []
+
+        return {
+            'id': transfer[0],  # Unique identifier for the transfer
+            'reference': transfer[1],  # Transfer reference
+            'transfer_from': transfer[2],  # Origin of the transfer
+            'transfer_to': transfer[3],  # Destination of the transfer (typically an integer or ID)
+            'transfer_status': transfer[4],  # Status of the transfer
+            'created_at': transfer[5],  # Timestamp of when the transfer was created
+            'updated_at': transfer[6],  # Timestamp of when the transfer was last updated
+            'items': items,  # List of items (parsed from JSON string if applicable)
+        }

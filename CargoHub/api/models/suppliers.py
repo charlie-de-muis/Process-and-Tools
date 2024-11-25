@@ -2,8 +2,8 @@
 
 import sqlite3
 
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 SUPPLIERS = []
 
@@ -12,7 +12,7 @@ class Suppliers(Base):
         self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_suppliers (self):
+    def gets (self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -31,7 +31,7 @@ class Suppliers(Base):
         conn.close()
         return suppliers
 
-    def get_supplier(self, supplier_id):
+    def get(self, supplier_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -48,9 +48,9 @@ class Suppliers(Base):
 
         cursor.close()
         conn.close()
-        return supplier
+        return self.convert_to_dict(supplier)
         
-    def add_supplier(self, supplier):
+    def add(self, supplier):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -89,7 +89,7 @@ class Suppliers(Base):
         cursor.close()
         conn.close()
 
-    def update_supplier(self, supplier_id, supplier):
+    def update(self, supplier_id, supplier):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -155,7 +155,7 @@ class Suppliers(Base):
             cursor.close()
             conn.close()
 
-    def remove_supplier (self, supplier_id):
+    def remove(self, supplier_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -169,3 +169,24 @@ class Suppliers(Base):
         cursor.close()
         conn.close()
 
+    def convert_to_dict(self, supplier):
+        """
+        Converts a supplier tuple fetched from the database into a dictionary
+        with the structure of the given JSON.
+        """
+        return {
+            'id': supplier[0],  # Unique identifier for the supplier
+            'code': supplier[1],  # Supplier code
+            'name': supplier[2],  # Supplier name
+            'address': supplier[3],  # Address of the supplier
+            'address_extra': supplier[4],  # Extra address information (optional)
+            'city': supplier[5],  # City of the supplier
+            'zip_code': supplier[6],  # Zip code of the supplier
+            'province': supplier[7],  # Province of the supplier
+            'country': supplier[8],  # Country of the supplier
+            'contact_name': supplier[9],  # Contact person name
+            'phonenumber': supplier[10],  # Contact phone number
+            'reference': supplier[11],  # Reference of the supplier
+            'created_at': supplier[12],  # Timestamp of when the supplier was created
+            'updated_at': supplier[13],  # Timestamp of when the supplier was last updated
+        }

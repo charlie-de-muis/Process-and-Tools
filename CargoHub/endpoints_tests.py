@@ -1,0 +1,853 @@
+import requests
+# TODO: replace with test server url
+BASE_URL = "http://localhost:3000"
+# http://145.24.223.64:3000
+
+# IT-auth-get-clients - checken of API key goed werkt
+def test_auth_get_clients():
+    response = requests.get(f"{BASE_URL}/api/v1/clients")
+    assert response.status_code == 401
+# IT-data-post-clients - checken of uploaden goed gaat
+def test_data_post_client():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    client = {
+        "id": 100000, 
+        "name": "Raymond Inc", 
+        "address": "1296 Daniel Road Apt. 349", 
+        "city": "Pierceview", 
+        "zip_code": "28301", 
+        "province": "Colorado", 
+        "country": "United States", 
+        "contact_name": "Bryan Clark", 
+        "contact_phone": "242.732.3483x2573", 
+        "contact_email": "robertcharles@example.net", 
+        "created_at": "2010-04-28 02:22:53", 
+        "updated_at": "2022-02-09 20:22:35"
+        }
+    response = requests.post(f"{BASE_URL}/api/v1/clients", headers=header, json=client)
+    assert response.status_code == 201
+# IT-data-get-clients - checken of je de verwachte data terug krijgt
+def test_data_get_client():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+    client = [
+        100000,
+        "Raymond Inc",
+        "1296 Daniel Road Apt. 349",
+        "Pierceview",
+        "28301",
+        "Colorado",
+        "United States",
+        "Bryan Clark",
+        "242.732.3483x2573",
+        "robertcharles@example.net",
+        "-",
+        "-" 
+    ]
+
+    response = requests.get(f"{BASE_URL}/api/v1/clients/100000", headers=header)
+    assert response.status_code == 200
+
+    actual_client = response.json()
+    actual_client[10] = "-" 
+    actual_client[11] = "-"
+
+    assert actual_client == client
+# IT-data-update-clients
+def test_data_update_clients():
+    header = {"API_KEY": "a1b2c3d4e5"}
+    data = {"name": "Updated Client Name"}
+
+    response = requests.put(f"{BASE_URL}/api/v1/clients/100000", headers=header, json=data)
+    assert response.status_code == 200
+# IT-data-delete-clients
+def test_data_delete_clients():
+    header = {"API_KEY": "a1b2c3d4e5"}
+
+    response = requests.delete(f"{BASE_URL}/api/v1/clients/100000", headers=header)
+    assert response.status_code == 200
+# check if client is not found
+def test_data_check_deleted_client():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+    response = requests.get(f"{BASE_URL}/api/v1/client/100000", headers=header)
+    assert response.status_code == 404
+
+
+# IT-auth-get-inventories - checken of API key goed werkt
+def test_auth_get_inventories():
+    response = requests.get(f"{BASE_URL}/api/v1/inventories")
+    assert response.status_code == 401
+# IT-data-post-inventories - checken of uploaden goed gaat
+def test_data_post_inventories():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    inventory = {
+        "id": 100000,
+        "item_id": "P000001",
+        "description": "Face-to-face clear-thinking complexity",
+        "item_reference": "sjQ23408K",
+        "locations": [
+            3211,
+            24700,
+            14123,
+            19538,
+            31071,
+            24701,
+            11606,
+            11817
+        ],
+        "total_on_hand": 262,
+        "total_expected": 0,
+        "total_ordered": 80,
+        "total_allocated": 41,
+        "total_available": 141,
+        "created_at": "2015-02-19 16:08:24",
+        "updated_at": "2015-09-26 06:37:56"
+    }
+    response = requests.post(f"{BASE_URL}/api/v1/inventories", headers=header, json=inventory)
+    assert response.status_code == 201
+# IT-data-get-inventories - checken of je de verwachte data terug krijgt
+def test_data_get_inventories():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    inventory = [
+        100000,
+        "P000001",
+        "Face-to-face clear-thinking complexity",
+        "sjQ23408K",
+        "[3211, 24700, 14123, 19538, 31071, 24701, 11606, 11817]",
+        262,
+        0,
+        80,
+        41,
+        141,
+        "-",
+        "-"
+        ]
+    response = requests.get(f"{BASE_URL}/api/v1/inventories/100000", headers=header)
+    assert response.status_code == 200
+
+    actual_inv = response.json()
+    actual_inv[10] = "-" 
+    actual_inv[11] = "-"
+
+    assert actual_inv == inventory
+# IT-data-update-inventories
+def test_data_update_inventories():
+    header = {"API_KEY": "a1b2c3d4e5"}
+    data = {"item": "Updated Item Name"}
+
+    response = requests.put(f"{BASE_URL}/api/v1/inventories/100000", headers=header, json=data)
+    assert response.status_code == 200
+    # IT-data-delete-inventories
+# IT-data-delete-inventories
+def test_data_delete_inventories():
+    header = {"API_KEY": "a1b2c3d4e5"}
+
+    response = requests.delete(f"{BASE_URL}/api/v1/inventories/100000", headers=header)
+    assert response.status_code == 200
+# check if inventory is not found
+def test_data_check_deleted_inv():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    response = requests.get(f"{BASE_URL}/api/v1/inventories/100000", headers=header)
+    assert response.status_code == 404
+
+
+# IT-auth-get-items - checken of API key goed werkt
+def test_auth_get_items():
+    response = requests.get(f"{BASE_URL}/api/v1/items")
+    assert response.status_code == 401
+# IT-data-post-items - checken of uploaden goed gaat
+def test_data_post_items():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    items = {
+        "uid": "P100000",
+        "code": "sjQ23408K",
+        "description": "Face-to-face clear-thinking complexity",
+        "short_description": "must",
+        "upc_code": "6523540947122",
+        "model_number": "63-OFFTq0T",
+        "commodity_code": "oTo304",
+        "item_line": 11,
+        "item_group": 73,
+        "item_type": 14,
+        "unit_purchase_quantity": 47,
+        "unit_order_quantity": 13,
+        "pack_order_quantity": 11,
+        "supplier_id": 34,
+        "supplier_code": "SUP423",
+        "supplier_part_number": "E-86805-uTM",
+        "created_at": "2015-02-19 16:08:24",
+        "updated_at": "2015-09-26 06:37:56"
+    }
+    response = requests.post(f"{BASE_URL}/api/v1/items", headers=header, json=items)
+    assert response.status_code == 201
+# IT-data-get-items - checken of je de verwachte data terug krijgt
+def test_data_get_items():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    items = [
+        "P100000",
+        "sjQ23408K",
+        "Face-to-face clear-thinking complexity",
+        "must",
+        "6523540947122",
+        "63-OFFTq0T",
+        "oTo304",
+        11,
+        73,
+        14,
+        47,
+        13,
+        11,
+        34,
+        "SUP423",
+        "E-86805-uTM",
+        "-",
+        "-"
+        ]
+    response = requests.get(f"{BASE_URL}/api/v1/items/P100000", headers=header)
+    assert response.status_code == 200
+
+    actual_item = response.json()
+    actual_item[16] = "-" 
+    actual_item[17] = "-"
+
+    assert actual_item == items
+# IT-data-update-items
+def test_data_update_items():
+    header = {"API_KEY": "a1b2c3d4e5"}
+    data = {"description": "Updated Item Description"}
+
+    response = requests.put(f"{BASE_URL}/api/v1/items/P100000", headers=header, json=data)
+    assert response.status_code == 200
+# IT-data-delete-items
+def test_data_delete_items():
+    header = {"API_KEY": "a1b2c3d4e5"}
+
+    response = requests.delete(f"{BASE_URL}/api/v1/items/P100000", headers=header)
+    assert response.status_code == 200
+# check if item is not found
+def test_data_check_delete_item():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    response = requests.get(f"{BASE_URL}/api/v1/items/P100000", headers=header)
+    assert response.status_code == 404
+
+
+# IT-auth-get-locations - checken of API key goed werkt
+def test_auth_get_locations():
+    response = requests.get(f"{BASE_URL}/api/v1/locations")
+    assert response.status_code == 401
+# IT-data-post-locations - checken of uploaden goed gaat
+def test_data_post_locations():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    locations = {
+        "id": 100000,
+        "warehouse_id": 1,
+        "code": "A.1.0",
+        "name": "Row: A, Rack: 1, Shelf: 0",
+        "created_at": "1992-05-15 03:21:32",
+        "updated_at": "1992-05-15 03:21:32"
+    }
+    response = requests.post(f"{BASE_URL}/api/v1/locations", headers=header, json=locations)
+    assert response.status_code == 201
+# IT-data-get-locations - checken of je de verwachte data terug krijgt
+def test_data_get_locations():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    locations = [
+        100000,
+        1,
+        "A.1.0",
+        "Row: A, Rack: 1, Shelf: 0",
+        "-",
+        "-"
+        ]
+    response = requests.get(f"{BASE_URL}/api/v1/locations/100000", headers=header)
+    assert response.status_code == 200
+    
+    actual_location = response.json()
+    actual_location[4] = "-" 
+    actual_location[5] = "-"
+
+    assert actual_location == locations
+# IT-data-update-locations
+def test_data_update_locations():
+    header = {"API_KEY": "a1b2c3d4e5"}
+    data = {"address": "Updated Location Address"}
+
+    response = requests.put(f"{BASE_URL}/api/v1/locations/100000", headers=header, json=data)
+    assert response.status_code == 200
+# IT-data-delete-locations
+def test_data_delete_locations():
+    header = {"API_KEY": "a1b2c3d4e5"}
+
+    response = requests.delete(f"{BASE_URL}/api/v1/locations/100000", headers=header)
+    assert response.status_code == 200
+# check if location is not found
+def test_data_check_delete_location():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    response = requests.get(f"{BASE_URL}/api/v1/locations/100000", headers=header)
+    assert response.status_code == 404
+
+
+# IT-auth-get-orders - checken of API key goed werkt
+def test_auth_get_orders():
+    response = requests.get(f"{BASE_URL}/api/v1/orders")
+    assert response.status_code == 401
+# IT-data-post-orders - checken of uploaden goed gaat
+def test_data_post_orders():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    orders = {
+        "id": 100000,
+        "source_id": 33,
+        "order_date": "2019-04-03T11:33:15Z",
+        "request_date": "2019-04-07T11:33:15Z",
+        "reference": "ORD00001",
+        "reference_extra": "Bedreven arm straffen bureau.",
+        "order_status": "Delivered",
+        "notes": "Voedsel vijf vork heel.",
+        "shipping_notes": "Buurman betalen plaats bewolkt.",
+        "picking_notes": "Ademen fijn volgorde scherp aardappel op leren.",
+        "warehouse_id": 18,
+        "ship_to": "",
+        "bill_to": "",
+        "shipment_id": 1,
+        "total_amount": 9905.13,
+        "total_discount": 150.77,
+        "total_tax": 372.72,
+        "total_surcharge": 77.6,
+        "created_at": "2019-04-03T11:33:15Z",
+        "updated_at": "2019-04-05T07:33:15Z",
+        "items": [
+            {
+                "item_id": "P007435",
+                "amount": 23
+            },
+            {
+                "item_id": "P009557",
+                "amount": 1
+            },
+            {
+                "item_id": "P009553",
+                "amount": 50
+            },
+            {
+                "item_id": "P010015",
+                "amount": 16
+            },
+            {
+                "item_id": "P002084",
+                "amount": 33
+            },
+            {
+                "item_id": "P009663",
+                "amount": 18
+            },
+            {
+                "item_id": "P010125",
+                "amount": 18
+            },
+            {
+                "item_id": "P005768",
+                "amount": 26
+            },
+            {
+                "item_id": "P004051",
+                "amount": 1
+            },
+            {
+                "item_id": "P005026",
+                "amount": 29
+            },
+            {
+                "item_id": "P000726",
+                "amount": 22
+            },
+            {
+                "item_id": "P008107",
+                "amount": 47
+            },
+            {
+                "item_id": "P001598",
+                "amount": 32
+            },
+            {
+                "item_id": "P002855",
+                "amount": 20
+            },
+            {
+                "item_id": "P010404",
+                "amount": 30
+            },
+            {
+                "item_id": "P010446",
+                "amount": 6
+            },
+            {
+                "item_id": "P001517",
+                "amount": 9
+            },
+            {
+                "item_id": "P009265",
+                "amount": 2
+            },
+            {
+                "item_id": "P001108",
+                "amount": 20
+            },
+            {
+                "item_id": "P009110",
+                "amount": 18
+            },
+            {
+                "item_id": "P009686",
+                "amount": 13
+            }
+        ]
+    }
+    response = requests.post(f"{BASE_URL}/api/v1/orders", headers=header, json=orders)
+    assert response.status_code == 201
+# IT-data-get-orders - checken of je de verwachte data terug krijgt
+def test_data_get_orders():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    orders = [
+        100000,
+        33,
+        "2019-04-03T11:33:15Z",
+        "2019-04-07T11:33:15Z",
+        "ORD00001",
+        "Bedreven arm straffen bureau.",
+        "Delivered",
+        "Voedsel vijf vork heel.",
+        "Buurman betalen plaats bewolkt.",
+        "Ademen fijn volgorde scherp aardappel op leren.",
+        18,
+        "",
+        "",
+        1,
+        9905.13,
+        150.77,
+        372.72,
+        77.6,
+        "-",
+        "-",
+        "[{\"item_id\": \"P007435\", \"amount\": 23}, {\"item_id\": \"P009557\", \"amount\": 1}, {\"item_id\": \"P009553\", \"amount\": 50}, {\"item_id\": \"P010015\", \"amount\": 16}, {\"item_id\": \"P002084\", \"amount\": 33}, {\"item_id\": \"P009663\", \"amount\": 18}, {\"item_id\": \"P010125\", \"amount\": 18}, {\"item_id\": \"P005768\", \"amount\": 26}, {\"item_id\": \"P004051\", \"amount\": 1}, {\"item_id\": \"P005026\", \"amount\": 29}, {\"item_id\": \"P000726\", \"amount\": 22}, {\"item_id\": \"P008107\", \"amount\": 47}, {\"item_id\": \"P001598\", \"amount\": 32}, {\"item_id\": \"P002855\", \"amount\": 20}, {\"item_id\": \"P010404\", \"amount\": 30}, {\"item_id\": \"P010446\", \"amount\": 6}, {\"item_id\": \"P001517\", \"amount\": 9}, {\"item_id\": \"P009265\", \"amount\": 2}, {\"item_id\": \"P001108\", \"amount\": 20}, {\"item_id\": \"P009110\", \"amount\": 18}, {\"item_id\": \"P009686\", \"amount\": 13}]"
+]
+    response = requests.get(f"{BASE_URL}/api/v1/orders/100000", headers=header)
+    assert response.status_code == 200
+    
+    actual_order = response.json()
+    actual_order[18] = "-" 
+    actual_order[19] = "-"
+
+    assert actual_order == orders
+# IT-data-update-orders
+def test_data_update_orders():
+    header = {"API_KEY": "a1b2c3d4e5"}
+    data = {"status": "Updated Order Status"}
+
+    response = requests.put(f"{BASE_URL}/api/v1/orders/100000", headers=header, json=data)
+    assert response.status_code == 200
+# IT-data-delete-orders
+def test_data_delete_orders():
+    header = {"API_KEY": "a1b2c3d4e5"}
+
+    response = requests.delete(f"{BASE_URL}/api/v1/orders/100000", headers=header)
+    assert response.status_code == 200
+# check if order is not found
+def test_data_check_delete_orders():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    response = requests.get(f"{BASE_URL}/api/v1/orders/100000", headers=header)
+    assert response.status_code == 404
+
+
+# IT-auth-get-shipments - checken of API key goed werkt
+def test_auth_get_shipments():
+    response = requests.get(f"{BASE_URL}/api/v1/shipments")
+    assert response.status_code == 401
+# IT-data-post-shipments - checken of uploaden goed gaat
+def test_data_post_shipments():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    shipments = {
+        "id": 100000,
+        "order_id": 1,
+        "source_id": 33,
+        "order_date": "2000-03-09",
+        "request_date": "2000-03-11",
+        "shipment_date": "2000-03-13",
+        "shipment_type": "I",
+        "shipment_status": "Pending",
+        "notes": "Zee vertrouwen klas rots heet lachen oneven begrijpen.",
+        "carrier_code": "DPD",
+        "carrier_description": "Dynamic Parcel Distribution",
+        "service_code": "Fastest",
+        "payment_type": "Manual",
+        "transfer_mode": "Ground",
+        "total_package_count": 31,
+        "total_package_weight": 594.42,
+        "created_at": "2000-03-10T11:11:14Z",
+        "updated_at": "2000-03-11T13:11:14Z",
+        "items": [
+            {
+                "item_id": "P007435",
+                "amount": 23
+            },
+            {
+                "item_id": "P009557",
+                "amount": 1
+            },
+            {
+                "item_id": "P009553",
+                "amount": 50
+            },
+            {
+                "item_id": "P010015",
+                "amount": 16
+            },
+            {
+                "item_id": "P002084",
+                "amount": 33
+            },
+            {
+                "item_id": "P009663",
+                "amount": 18
+            },
+            {
+                "item_id": "P010125",
+                "amount": 18
+            },
+            {
+                "item_id": "P005768",
+                "amount": 26
+            },
+            {
+                "item_id": "P004051",
+                "amount": 1
+            },
+            {
+                "item_id": "P005026",
+                "amount": 29
+            },
+            {
+                "item_id": "P000726",
+                "amount": 22
+            },
+            {
+                "item_id": "P008107",
+                "amount": 47
+            },
+            {
+                "item_id": "P001598",
+                "amount": 32
+            },
+            {
+                "item_id": "P002855",
+                "amount": 20
+            },
+            {
+                "item_id": "P010404",
+                "amount": 30
+            },
+            {
+                "item_id": "P010446",
+                "amount": 6
+            },
+            {
+                "item_id": "P001517",
+                "amount": 9
+            },
+            {
+                "item_id": "P009265",
+                "amount": 2
+            },
+            {
+                "item_id": "P001108",
+                "amount": 20
+            },
+            {
+                "item_id": "P009110",
+                "amount": 18
+            },
+            {
+                "item_id": "P009686",
+                "amount": 13
+            }
+        ]
+    }
+    response = requests.post(f"{BASE_URL}/api/v1/shipments", headers=header, json=shipments)
+    assert response.status_code == 201
+# IT-data-get-shipments - checken of je de verwachte data terug krijgt
+def test_data_get_shipments():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    shipments = [
+        100000,
+        1,
+        33,
+        "2000-03-09",
+        "2000-03-11",
+        "2000-03-13",
+        "I",
+        "Pending",
+        "Zee vertrouwen klas rots heet lachen oneven begrijpen.",
+        "DPD",
+        "Dynamic Parcel Distribution",
+        "Fastest",
+        "Manual",
+        "Ground",
+        31,
+        594.42,
+        "-",
+        "-",
+        "[{\"item_id\": \"P007435\", \"amount\": 23}, {\"item_id\": \"P009557\", \"amount\": 1}, {\"item_id\": \"P009553\", \"amount\": 50}, {\"item_id\": \"P010015\", \"amount\": 16}, {\"item_id\": \"P002084\", \"amount\": 33}, {\"item_id\": \"P009663\", \"amount\": 18}, {\"item_id\": \"P010125\", \"amount\": 18}, {\"item_id\": \"P005768\", \"amount\": 26}, {\"item_id\": \"P004051\", \"amount\": 1}, {\"item_id\": \"P005026\", \"amount\": 29}, {\"item_id\": \"P000726\", \"amount\": 22}, {\"item_id\": \"P008107\", \"amount\": 47}, {\"item_id\": \"P001598\", \"amount\": 32}, {\"item_id\": \"P002855\", \"amount\": 20}, {\"item_id\": \"P010404\", \"amount\": 30}, {\"item_id\": \"P010446\", \"amount\": 6}, {\"item_id\": \"P001517\", \"amount\": 9}, {\"item_id\": \"P009265\", \"amount\": 2}, {\"item_id\": \"P001108\", \"amount\": 20}, {\"item_id\": \"P009110\", \"amount\": 18}, {\"item_id\": \"P009686\", \"amount\": 13}]"
+]
+    response = requests.get(f"{BASE_URL}/api/v1/shipments/100000", headers=header)
+    assert response.status_code == 200
+    actual_shipment = response.json()
+    actual_shipment[16] = "-" 
+    actual_shipment[17] = "-"
+
+    assert actual_shipment == shipments
+# IT-data-update-shipments
+def test_data_update_shipments():
+    header = {"API_KEY": "a1b2c3d4e5"}
+    data = {"tracking_number": "Updated Tracking Number"}
+
+    response = requests.put(f"{BASE_URL}/api/v1/shipments/100000", headers=header, json=data)
+    assert response.status_code == 200
+# IT-data-delete-shipments
+def test_data_delete_shipments():
+    header = {"API_KEY": "a1b2c3d4e5"}
+
+    response = requests.delete(f"{BASE_URL}/api/v1/shipments/100000", headers=header)
+    assert response.status_code == 200
+# check if shipment is not found
+def test_data_check_delete_shipment():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    response = requests.get(f"{BASE_URL}/api/v1/shipments/100000", headers=header)
+    assert response.status_code == 404
+
+
+# IT-auth-get-suppliers - checken of API key goed werkt
+def test_auth_get_suppliers():
+    response = requests.get(f"{BASE_URL}/api/v1/suppliers")
+    assert response.status_code == 401
+# IT-data-post-suppliers - checken of uploaden goed gaat
+def test_data_post_suppliers():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    suppliers = {
+        "id": 100000,
+        "code": "SUP0001",
+        "name": "Lee, Parks and Johnson",
+        "address": "5989 Sullivan Drives",
+        "address_extra": "Apt. 996",
+        "city": "Port Anitaburgh",
+        "zip_code": "91688",
+        "province": "Illinois",
+        "country": "Czech Republic",
+        "contact_name": "Toni Barnett",
+        "phonenumber": "363.541.7282x36825",
+        "reference": "LPaJ-SUP0001",
+        "created_at": "1971-10-20 18:06:17",
+        "updated_at": "1985-06-08 00:13:46"
+    }
+    response = requests.post(f"{BASE_URL}/api/v1/suppliers", headers=header, json=suppliers)
+    assert response.status_code == 201
+# IT-data-get-suppliers - checken of je de verwachte data terug krijgt
+def test_data_get_suppliers():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    suppliers = [
+        100000,
+        "SUP0001",
+        "Lee, Parks and Johnson",
+        "5989 Sullivan Drives",
+        "Apt. 996",
+        "Port Anitaburgh",
+        "91688",
+        "Illinois",
+        "Czech Republic",
+        "Toni Barnett",
+        "363.541.7282x36825",
+        "LPaJ-SUP0001",
+        "-",
+        "-"
+        ]
+    response = requests.get(f"{BASE_URL}/api/v1/suppliers/100000", headers=header)
+    assert response.status_code == 200
+    actual_supplier = response.json()
+    actual_supplier[12] = "-" 
+    actual_supplier[13] = "-"
+
+    assert actual_supplier == suppliers
+# IT-data-update-suppliers
+def test_data_update_suppliers():
+    header = {"API_KEY": "a1b2c3d4e5"}
+    data = {"name": "Updated Supplier Name"}
+
+    response = requests.put(f"{BASE_URL}/api/v1/suppliers/{1}", headers=header, json=data)
+    assert response.status_code == 200
+# IT-data-delete-suppliers
+def test_data_delete_suppliers():
+    header = {"API_KEY": "a1b2c3d4e5"}
+
+    response = requests.delete(f"{BASE_URL}/api/v1/suppliers/100000", headers=header)
+    assert response.status_code == 200
+# check if supplier is not found
+def test_data_check_delete_suppliers():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    response = requests.get(f"{BASE_URL}/api/v1/suppliers/100000", headers=header)
+    assert response.status_code == 404
+
+
+# IT-auth-get-transfers - checken of API key goed werkt
+def test_auth_get_transfers():
+    response = requests.get(f"{BASE_URL}/api/v1/transfers")
+    assert response.status_code == 401
+# IT-data-post-transfers - checken of uploaden goed gaat
+def test_data_post_transfers():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    transfers = {
+        "id": 1000000,
+        "reference": "TR00001",
+        "transfer_from": "",
+        "transfer_to": 9229,
+        "transfer_status": "Completed",
+        "created_at": "2000-03-11T13:11:14Z",
+        "updated_at": "2000-03-12T16:11:14Z",
+        "items": [
+            {
+                "item_id": "P007435",
+                "amount": 23
+            }
+        ]
+    }
+    response = requests.post(f"{BASE_URL}/api/v1/transfers", headers=header, json=transfers)
+    assert response.status_code == 201
+# IT-data-get-transfers - checken of je de verwachte data terug krijgt
+def test_data_get_transfers():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    transfers = [
+        1000000,
+        "TR00001",
+        "",
+        9229,
+        "Completed",
+        "-",
+        "-",
+        "[{\"item_id\": \"P007435\", \"amount\": 23}]"
+        ]
+    response = requests.get(f"{BASE_URL}/api/v1/transfers/1000000", headers=header)
+    assert response.status_code == 200
+    actual_transfer = response.json()
+    actual_transfer[5] = "-" 
+    actual_transfer[6] = "-"
+
+    assert actual_transfer == transfers
+# IT-data-update-transfers
+def test_data_update_transfers():
+    header = {"API_KEY": "a1b2c3d4e5"}
+    data = {"status": "Updated Transfer Status"}
+
+    response = requests.put(f"{BASE_URL}/api/v1/transfers/1000000", headers=header, json=data)
+    assert response.status_code == 200
+# IT-data-delete-transfers
+def test_data_delete_transfers():
+    header = {"API_KEY": "a1b2c3d4e5"}
+
+    response = requests.delete(f"{BASE_URL}/api/v1/transfers/1000000", headers=header)
+    assert response.status_code == 200
+# check if transfer is not found
+def test_data_check_delete_transfer():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    response = requests.get(f"{BASE_URL}/api/v1/transfers/1000000", headers=header)
+    assert response.status_code == 404
+
+
+# IT-auth-get-warehouses - checken of API key goed werkt
+def test_auth_get_warehouses():
+    response = requests.get(f"{BASE_URL}/api/v1/warehouses")
+    assert response.status_code == 401
+# IT-data-post-warehouses - checken of uploaden goed gaat
+def test_data_post_warehouses():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    warehouses = {
+        "id": 100000,
+        "code": "YQZZNL56",
+        "name": "Heemskerk cargo hub",
+        "address": "Karlijndreef 281",
+        "zip": "4002 AS",
+        "city": "Heemskerk",
+        "province": "Friesland",
+        "country": "NL",
+        "contact": {
+            "name": "Fem Keijzer",
+            "phone": "(078) 0013363",
+            "email": "blamore@example.net"
+        },
+        "created_at": "1983-04-13 04:59:55",
+        "updated_at": "2007-02-08 20:11:00"
+    }
+    response = requests.post(f"{BASE_URL}/api/v1/warehouses", headers=header, json=warehouses)
+    assert response.status_code == 201
+# IT-data-get-warehouses - checken of je de verwachte data terug krijgt
+def test_data_get_warehouses():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    warehouses = [
+        100000,
+        "YQZZNL56",
+        "Heemskerk cargo hub",
+        "Karlijndreef 281",
+        "4002 AS",
+        "Heemskerk",
+        "Friesland",
+        "NL",
+        "{\"name\": \"Fem Keijzer\", \"phone\": \"(078) 0013363\", \"email\": \"blamore@example.net\"}",
+        "-",
+        "-"
+        ]
+    response = requests.get(f"{BASE_URL}/api/v1/warehouses/100000", headers=header)
+    assert response.status_code == 200
+    actual_warehouse = response.json()
+    actual_warehouse[9] = "-" 
+    actual_warehouse[10] = "-"
+
+    assert actual_warehouse == warehouses
+# IT-data-update-warehouses
+def test_data_update_warehouses():
+    header = {"API_KEY": "a1b2c3d4e5"}
+    data = {"location": "Updated Warehouse Location"}
+
+    response = requests.put(f"{BASE_URL}/api/v1/warehouses/100000", headers=header, json=data)
+    assert response.status_code == 200
+# IT-data-delete-warehouses
+def test_data_delete_warehouses():
+    header = {"API_KEY": "a1b2c3d4e5"}
+
+    response = requests.delete(f"{BASE_URL}/api/v1/warehouses/100000", headers=header)
+    assert response.status_code == 200
+# check if warehouse is not found
+def test_data_check_delete_warehouse():
+    header = {"API_KEY" : "a1b2c3d4e5"}
+
+    response = requests.get(f"{BASE_URL}/api/v1/warehouses/100000", headers=header)
+    assert response.status_code == 404
+

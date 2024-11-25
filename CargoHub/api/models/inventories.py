@@ -1,8 +1,8 @@
 import sqlite3
 import json
 
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 INVENTORIES = []
 
@@ -11,7 +11,7 @@ class Inventories(Base):
         self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_inventories(self):
+    def gets(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -30,7 +30,7 @@ class Inventories(Base):
         conn.close()
         return inventories
 
-    def get_inventory(self, inventory_id):
+    def get(self, inventory_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -47,7 +47,7 @@ class Inventories(Base):
                 print(f"No inventory with id {inventory_id}")
                 return None
 
-            return inv
+            return self.convert_to_dict(inv)
 
         except sqlite3.DatabaseError as e:
             print(f"Database error: {e}")
@@ -57,81 +57,81 @@ class Inventories(Base):
             cursor.close()
             conn.close()
 
-    def get_inventories_for_item(self, item_id):
-        conn = self.db.connection(self.dbfile)
-        if conn is None:
-            print("DB connection failed")
-            return None  # Exit if connection fails
+    # def get_inventories_for_item(self, item_id):
+    #     conn = self.db.connection(self.dbfile)
+    #     if conn is None:
+    #         print("DB connection failed")
+    #         return None  # Exit if connection fails
         
-        try:
-            cursor = conn.cursor()
+    #     try:
+    #         cursor = conn.cursor()
 
-            # Parameterized query to prevent SQL injection
-            query = "SELECT * FROM inventories WHERE item_id = ?"
-            cursor.execute(query, (item_id,))
+    #         # Parameterized query to prevent SQL injection
+    #         query = "SELECT * FROM inventories WHERE item_id = ?"
+    #         cursor.execute(query, (item_id,))
             
-            inventories = cursor.fetchall()  # Fetch all records matching the item_id
+    #         inventories = cursor.fetchall()  # Fetch all records matching the item_id
 
-            if not inventories:
-                print(f"No inventories found for item ID {item_id}")
-                return []  # Return empty list if no records are found
+    #         if not inventories:
+    #             print(f"No inventories found for item ID {item_id}")
+    #             return []  # Return empty list if no records are found
 
-            return inventories  # Return the list of inventory records
+    #         return inventories  # Return the list of inventory records
         
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
-        finally:
-            cursor.close()
-            conn.close()
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
+    #         return None
+    #     finally:
+    #         cursor.close()
+    #         conn.close()
 
-    def get_inventory_totals_for_item(self, item_id):
-        result = {
-            "total_expected": 0,
-            "total_ordered": 0,
-            "total_allocated": 0,
-            "total_available": 0
-        }
+    # def get_inventory_totals_for_item(self, item_id):
+        # result = {
+        #     "total_expected": 0,
+        #     "total_ordered": 0,
+        #     "total_allocated": 0,
+        #     "total_available": 0
+        # }
 
-        conn = self.db.connection(self.dbfile)
-        if conn is None:
-            print("DB connection failed")
-            return None  # Exit if connection fails
+        # conn = self.db.connection(self.dbfile)
+        # if conn is None:
+        #     print("DB connection failed")
+        #     return None  # Exit if connection fails
         
-        try:
-            cursor = conn.cursor()
+        # try:
+        #     cursor = conn.cursor()
 
-            # Parameterized query to get totals for each column
-            query = """
-                SELECT total_expected, total_ordered, total_allocated, total_available
-                FROM inventories
-                WHERE item_id = ?
-            """
-            cursor.execute(query, (item_id,))
+        #     # Parameterized query to get totals for each column
+        #     query = """
+        #         SELECT total_expected, total_ordered, total_allocated, total_available
+        #         FROM inventories
+        #         WHERE item_id = ?
+        #     """
+        #     cursor.execute(query, (item_id,))
             
-            inventories = cursor.fetchall()  # Fetch all inventory records
+        #     inventories = cursor.fetchall()  # Fetch all inventory records
 
-            if not inventories:
-                print(f"No inventories found for item ID {item_id}")
-                return result  # Return default result if no records found
+        #     if not inventories:
+        #         print(f"No inventories found for item ID {item_id}")
+        #         return result  # Return default result if no records found
 
-            # Summing up the totals for the given item_id
-            for inventory in inventories:
-                result["total_expected"] += inventory[0]
-                result["total_ordered"] += inventory[1]
-                result["total_allocated"] += inventory[2]
-                result["total_available"] += inventory[3]
+        #     # Summing up the totals for the given item_id
+        #     for inventory in inventories:
+        #         result["total_expected"] += inventory[0]
+        #         result["total_ordered"] += inventory[1]
+        #         result["total_allocated"] += inventory[2]
+        #         result["total_available"] += inventory[3]
 
-            return result  # Return the calculated totals
+        #     return result  # Return the calculated totals
         
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
-        finally:
-            cursor.close()
-            conn.close()
+        # except Exception as e:
+        #     print(f"An error occurred: {e}")
+        #     return None
+        # finally:
+        #     cursor.close()
+        #     conn.close()
 
-    def add_inventory(self, inventory):
+    def add(self, inventory):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -179,7 +179,7 @@ class Inventories(Base):
         cursor.close()
         conn.close()
 
-    def update_inventory(self, inventory_id, inventory):
+    def update(self, inventory_id, inventory):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -243,7 +243,7 @@ class Inventories(Base):
             cursor.close()
             conn.close()
 
-    def remove_inventory(self, inventory_id):
+    def remove(self, inventory_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -256,3 +256,33 @@ class Inventories(Base):
         conn.commit()
         cursor.close()
         conn.close()
+
+    def convert_to_dict(self, inv):
+        """
+        Converts the inventory tuple fetched from the database into a dictionary
+        with the structure of the given JSON. Handles 'locations' properly.
+        """
+        locations_str = inv[4]  # The 'locations' field from the database
+        
+        # Check if locations contain square brackets and strip them out
+        if locations_str:
+            # Remove square brackets if they exist and then split by commas
+            locations_str = locations_str.strip('[]')  # Strip any square brackets
+            locations = [int(loc) for loc in locations_str.split(',')] if locations_str else []
+        else:
+            locations = []
+
+        return {
+            'id': inv[0],
+            'item_id': inv[1],
+            'description': inv[2],
+            'item_reference': inv[3],
+            'locations': locations,  # The corrected list of locations
+            'total_on_hand': inv[5],
+            'total_expected': inv[6],
+            'total_ordered': inv[7],
+            'total_allocated': inv[8],
+            'total_available': inv[9],
+            'created_at': inv[10],
+            'updated_at': inv[11]
+        }

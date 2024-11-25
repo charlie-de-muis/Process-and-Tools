@@ -2,18 +2,18 @@
 
 import sqlite3
 
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 ITEM_GROUPS = []
 
 
 class Item_Groups(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_item_groups(self):
+    def gets(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -32,7 +32,7 @@ class Item_Groups(Base):
         conn.close()
         return item_groups
 
-    def get_item_groups(self, item_groups_id):
+    def get(self, item_groups_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -49,9 +49,9 @@ class Item_Groups(Base):
 
         cursor.close()
         conn.close()
-        return item_group
+        return self.convert_to_dict(item_group)
         
-    def add_item_groups(self, item_group):
+    def add(self, item_group):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -88,7 +88,7 @@ class Item_Groups(Base):
         cursor.close()
         conn.close()
 
-    def update_item_groups(self, item_group_id, item_group):
+    def update(self, item_group_id, item_group):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -149,7 +149,7 @@ class Item_Groups(Base):
             cursor.close()
             conn.close()
 
-    def remove_item_groups(self, item_group_id):
+    def remove(self, item_group_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -162,3 +162,16 @@ class Item_Groups(Base):
         conn.commit
         cursor.close()
         conn.close()
+
+    def convert_to_dict(self, item_group):
+        """
+        Converts an item_group tuple fetched from the database into a dictionary
+        with the structure of the given JSON.
+        """
+        return {
+            'id': item_group[0],  # ID of the item group
+            'name': item_group[1],  # Name of the item group
+            'description': item_group[2],  # Description of the item group
+            'created_at': item_group[3],  # Creation timestamp
+            'updated_at': item_group[4]  # Update timestamp
+        }

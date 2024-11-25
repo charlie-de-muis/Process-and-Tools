@@ -1,0 +1,104 @@
+# from api.models.warehouses import Warehouses
+# from api.models.locations import Locations
+# from api.models.transfers import Transfers
+# from api.models.items import Items
+# from api.models.item_lines import Item_Lines
+# from api.models.item_groups import Item_Groups
+# from api.models.item_types import Item_Types
+# from api.models.inventories import Inventories
+# from api.models.suppliers import Suppliers
+# from api.models.orders import Orders
+# from api.models.clients import Clients
+# from api.models.shipments import Shipments
+
+# DEBUG = False
+
+# ROOT_PATH = "./data/"
+
+# _warehouses = None
+# _locations = None
+# _transfers = None
+# _items = None
+# _item_lines = None
+# _item_groups = None
+# _item_types = None
+# _inventories = None
+# _suppliers = None
+# _orders = None
+# _shipments = None
+# _clients = None
+
+
+# def init():
+#     global _warehouses
+#     _warehouses = Warehouses()
+#     global _locations
+#     _locations = Locations()
+#     global _transfers
+#     _transfers = Transfers()
+#     global _items
+#     _items = Items()
+#     global _item_lines
+#     _item_lines = Item_Lines()
+#     global _item_groups
+#     _item_groups = Item_Groups()
+#     global _item_types
+#     _item_types = Item_Types()
+#     global _inventories
+#     _inventories = Inventories()
+#     global _suppliers
+#     _suppliers = Suppliers()
+#     global _orders
+#     _orders = Orders()
+#     global _clients
+#     _clients = Clients()
+#     global _shipments
+#     _shipments = Shipments()
+
+
+# def fetch_warehouse_pool():
+#     return _warehouses
+
+
+# def fetch_location_pool():
+#     return _locations
+
+
+# def fetch_transfer_pool():
+#     return _transfers
+
+
+# def fetch_item_pool():
+#     return _items
+
+
+# def fetch_item_line_pool():
+#     return _item_lines
+
+
+# def fetch_item_group_pool():
+#     return _item_groups
+
+
+# def fetch_item_type_pool():
+#     return _item_types
+
+
+# def fetch_inventory_pool():
+#     return _inventories
+
+
+# def fetch_supplier_pool():
+#     return _suppliers
+
+
+# def fetch_order_pool():
+#     return _orders
+
+
+# def fetch_client_pool():
+#     return _clients
+
+
+# def fetch_shipment_pool():
+#     return _shipments

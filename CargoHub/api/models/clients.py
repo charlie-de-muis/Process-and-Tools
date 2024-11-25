@@ -1,16 +1,13 @@
-# DONE
-
 import sqlite3
-
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 class Clients(Base):
     def __init__(self):
         self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_clients(self):
+    def gets(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -19,17 +16,35 @@ class Clients(Base):
 
         query = "SELECT * FROM clients LIMIT 10"
         cursor.execute(query)
-        clients = cursor.fetchall()  # Fetch a single row
+        clients = cursor.fetchall()  # Fetch rows
         
-        if clients is None:
+        if not clients:
             print("No clients found")
             return None
-
+        
+        # Return clients as a list of dictionaries
+        clients_list = []
+        for client in clients:
+            clients_list.append({
+                'id': client[0],
+                'name': client[1],
+                'address': client[2],
+                'city': client[3],
+                'zip_code': client[4],
+                'province': client[5],
+                'country': client[6],
+                'contact_name': client[7],
+                'contact_phone': client[8],
+                'contact_email': client[9],
+                'created_at': client[10],
+                'updated_at': client[11],
+            })
+        
         cursor.close()
         conn.close()
-        return clients
+        return clients_list
 
-    def get_client(self, client_id):
+    def get(self, client_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -37,7 +52,6 @@ class Clients(Base):
         cursor = conn.cursor()
 
         try:
-            # Use the correct placeholder "?" for SQLite
             query = "SELECT * FROM clients WHERE id = ?"
             cursor.execute(query, (client_id,))  # Pass the client_id as a tuple
             client = cursor.fetchone()  # Fetch a single row
@@ -46,7 +60,20 @@ class Clients(Base):
                 print(f"No client with id {client_id}")
                 return None
 
-            return client
+            return {
+                'id': client[0],
+                'name': client[1],
+                'address': client[2],
+                'city': client[3],
+                'zip_code': client[4],
+                'province': client[5],
+                'country': client[6],
+                'contact_name': client[7],
+                'contact_phone': client[8],
+                'contact_email': client[9],
+                'created_at': client[10],
+                'updated_at': client[11],
+            }
 
         except sqlite3.DatabaseError as e:
             print(f"Database error: {e}")
@@ -56,7 +83,7 @@ class Clients(Base):
             cursor.close()
             conn.close()
         
-    def add_client(self, client):
+    def add(self, client):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -93,7 +120,7 @@ class Clients(Base):
         cursor.close()
         conn.close()
 
-    def update_client(self, client_id, client):
+    def update(self, client_id, client):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -154,7 +181,7 @@ class Clients(Base):
             cursor.close()
             conn.close()
 
-    def remove_client(self, client_id):
+    def remove(self, client_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")

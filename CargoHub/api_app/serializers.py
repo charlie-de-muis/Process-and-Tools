@@ -3,6 +3,19 @@ from .models import (Client, Inventory, ItemGroup, ItemLine, ItemType, Item, Loc
                      Shipment, Supplier, Transfer, Warehouse)
 
 class ClientSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField()
+    name = serializers.CharField(max_length=255)
+    address = serializers.CharField(max_length=255)
+    city = serializers.CharField(max_length=100)
+    zip_code = serializers.CharField(max_length=20)
+    province = serializers.CharField(max_length=100)
+    country = serializers.CharField(max_length=100)
+    contact_name = serializers.CharField(max_length=100)
+    contact_phone = serializers.CharField(max_length=20)
+    contact_email = serializers.EmailField()
+    created_at = serializers.DateTimeField()
+    updated_at = serializers.DateTimeField()
+    
     class Meta:
         model = Client
         fields = '__all__'

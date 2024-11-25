@@ -1,7 +1,7 @@
 import sqlite3
 
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 LOCATIONS = []
 
@@ -11,7 +11,7 @@ class Locations(Base):
         self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_locations(self):
+    def gets(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -30,7 +30,7 @@ class Locations(Base):
         conn.close()
         return locations
 
-    def get_location(self, location_id):
+    def get(self, location_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -47,7 +47,7 @@ class Locations(Base):
                 print(f"No client with id {location_id}")
                 return None
 
-            return location
+            return self.convert_to_dict(location)
 
         except sqlite3.DatabaseError as e:
             print(f"Database error: {e}")
@@ -57,35 +57,35 @@ class Locations(Base):
             cursor.close()
             conn.close()
 
-    def get_locations_in_warehouse(self, warehouse_id):
-        conn = self.db.connection(self.dbfile)
-        if conn is None:
-            print("DB connection failed")
-            return None  # Exit if connection fails
+    # def get_locations_in_warehouse(self, warehouse_id):
+    #     conn = self.db.connection(self.dbfile)
+    #     if conn is None:
+    #         print("DB connection failed")
+    #         return None  # Exit if connection fails
         
-        try:
-            cursor = conn.cursor()
+    #     try:
+    #         cursor = conn.cursor()
 
-            # Query to get locations where warehouse_id matches the given warehouse_id
-            query = "SELECT * FROM locations WHERE warehouse_id = ?"
-            cursor.execute(query, (warehouse_id,))
+    #         # Query to get locations where warehouse_id matches the given warehouse_id
+    #         query = "SELECT * FROM locations WHERE warehouse_id = ?"
+    #         cursor.execute(query, (warehouse_id,))
             
-            locations = cursor.fetchall()  # Fetch all matching locations
+    #         locations = cursor.fetchall()  # Fetch all matching locations
 
-            if not locations:
-                print(f"No locations found for warehouse_id {warehouse_id}")
-                return []  # Return an empty list if no locations are found
+    #         if not locations:
+    #             print(f"No locations found for warehouse_id {warehouse_id}")
+    #             return []  # Return an empty list if no locations are found
 
-            return locations  # Return the list of locations
+    #         return locations  # Return the list of locations
         
-        except Exception as e:
-            print(f"An error occurred: {e}")
-            return None
-        finally:
-            cursor.close()
-            conn.close()
+    #     except Exception as e:
+    #         print(f"An error occurred: {e}")
+    #         return None
+    #     finally:
+    #         cursor.close()
+    #         conn.close()
 
-    def add_location(self, location):
+    def add(self, location):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -121,7 +121,7 @@ class Locations(Base):
         cursor.close()
         conn.close()
 
-    def update_location(self, location_id, location):
+    def update(self, location_id, location):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -170,7 +170,7 @@ class Locations(Base):
             cursor.close()
             conn.close()
 
-    def remove_location(self, location_id):
+    def remove(self, location_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -183,3 +183,17 @@ class Locations(Base):
         conn.commit()
         cursor.close()
         conn.close()
+
+    def convert_to_dict(self, location):
+        """
+        Converts a location tuple fetched from the database into a dictionary
+        with the structure of the given JSON.
+        """
+        return {
+            'id': location[0],  # Unique identifier for the location
+            'warehouse_id': location[1],  # ID of the associated warehouse
+            'code': location[2],  # Code of the location
+            'name': location[3],  # Name of the location
+            'created_at': location[4],  # Timestamp of when the location was created
+            'updated_at': location[5],  # Timestamp of when the location was last updated
+        }

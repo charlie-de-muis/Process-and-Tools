@@ -3,53 +3,55 @@
 import sqlite3
 import json
 
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 class Warehouses(Base):
     def __init__(self):
         self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_warehouses (self):
+    def gets(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
-            return None  # If connection fails, return None
+            return None
         cursor = conn.cursor()
 
         query = "SELECT * FROM warehouses LIMIT 10"
         cursor.execute(query)
-        warehouses = cursor.fetchall()  # Fetch a single row
-        
-        if warehouses is None:
-            print("No warehouses found")
-            return None
+        warehouses = cursor.fetchall()
 
         cursor.close()
         conn.close()
-        return warehouses
 
-    def get_warehouse(self, warehouse_id):
+        # Convert rows into a list of dictionaries
+        warehouse_list = []
+        for warehouse in warehouses:
+            warehouse_list.append(self.convert_to_dict(warehouse))
+
+        return warehouse_list
+
+    def get(self, warehouse_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
-            return None  # If connection fails, return None
+            return None
         cursor = conn.cursor()
 
         query = "SELECT * FROM warehouses WHERE id = ?"
         cursor.execute(query, (warehouse_id,))
-        warehouse = cursor.fetchone()  # Fetch a single row
-        
-        if warehouse is None:
-            print(f"No warehouse with id {warehouse_id}")
-            return None
+        warehouse = cursor.fetchone()
 
         cursor.close()
         conn.close()
-        return warehouse
+
+        if warehouse is None:
+            return None
+
+        return self.convert_to_dict(warehouse)
         
-    def add_warehouse(self, warehouse):
+    def add(self, warehouse):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -85,7 +87,7 @@ class Warehouses(Base):
         cursor.close()
         conn.close()
 
-    def update_warehouse(self, warehouse_id, warehouse):
+    def update(self, warehouse_id, warehouse):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -145,7 +147,7 @@ class Warehouses(Base):
             cursor.close()
             conn.close()
 
-    def remove_warehouse (self, warehouse_id):
+    def remove(self, warehouse_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -158,3 +160,19 @@ class Warehouses(Base):
         conn.commit()
         cursor.close()
         conn.close()
+
+    def convert_to_dict(self, warehouse_tuple):
+        """Converts a warehouse tuple to a dictionary."""
+        return {
+            'id': warehouse_tuple[0],
+            'code': warehouse_tuple[1],
+            'name': warehouse_tuple[2],
+            'address': warehouse_tuple[3],
+            'zip': warehouse_tuple[4],
+            'city': warehouse_tuple[5],
+            'province': warehouse_tuple[6],
+            'country': warehouse_tuple[7],
+            'contact': json.loads(warehouse_tuple[8]),
+            'created_at': warehouse_tuple[9],
+            'updated_at': warehouse_tuple[10],
+        }

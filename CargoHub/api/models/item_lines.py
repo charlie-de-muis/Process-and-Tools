@@ -2,18 +2,18 @@
 
 import sqlite3
 
-from models.base import Base
-from models.Database_file import db_start
+from api.models.base import Base
+from api.models.Database_file import db_start
 
 ITEM_LINES = []
 
 
 class Item_Lines(Base):
     def __init__(self):
-        self.dbfile = "Cargohub_db"
+        self.dbfile = "Cargohub_db.sqlite"
         self.db = db_start()
 
-    def get_item_lines(self):
+    def gets(self):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -32,7 +32,7 @@ class Item_Lines(Base):
         conn.close()
         return item_lines
 
-    def get_item_lines(self, item_lines_id):
+    def get(self, item_lines_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -51,7 +51,7 @@ class Item_Lines(Base):
         conn.close()
         return item_line
         
-    def add_item_lines(self, item_line):
+    def add(self, item_line):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
@@ -88,7 +88,7 @@ class Item_Lines(Base):
         cursor.close()
         conn.close()
 
-    def update_item_lines(self, item_line_id, item_line):
+    def update(self, item_line_id, item_line):
         # Establish connection to the database
         conn = self.db.connection(self.dbfile)
         if conn is None:
@@ -149,7 +149,7 @@ class Item_Lines(Base):
             cursor.close()
             conn.close()
 
-    def remove_item_lines(self, item_line_id):
+    def remove(self, item_line_id):
         conn = self.db.connection(self.dbfile)
         if conn is None:
             print("DB connection failed")
