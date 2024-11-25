@@ -59,7 +59,6 @@ def insert_json_data(json_file, table_name):
             # Execute the INSERT statement
             cursor.execute(sql, tuple(values))
         except sqlite3.IntegrityError as e:
-            print(f"Integrity error inserting into {table_name}: {e}")
             all_records_uploaded = False
         except sqlite3.ProgrammingError as e:
             print(f"Programming error inserting into {table_name}: {e}")
