@@ -1,7 +1,9 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
+import django_tests
 
+@pytest.fixture
 @pytest.mark.django_db
 def test_api_app_status(client):
     # URL for the api_app endpoint (you can replace this with the correct URL pattern if needed)
