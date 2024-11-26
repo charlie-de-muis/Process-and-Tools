@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.8,3.9]
+        python-version: [3.8, 3.9]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -31,7 +31,7 @@ jobs:
     needs: build
     strategy:
       matrix:
-        python-version: [3.8,3.9]
+        python-version: [3.8, 3.9]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python ${{ matrix.python-version }}
@@ -47,3 +47,23 @@ jobs:
         run: |
           pytest
         working-directory: ./CargoHub
+
+  # Deploy Job
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: SSH into server and deploy
+        uses: appleboy/ssh-action@v0.1.0
+        with:
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          script: |
+            cd /path/to/your/repo  # Change to your Django project directory
+            git pull origin Refactoring  # Pull the latest changes from the Refactoring branch
+            source /path/to/venv/bin/activate  # Activate the virtual environment
+            pip install -r requirements.txt  # Install any new dependen
