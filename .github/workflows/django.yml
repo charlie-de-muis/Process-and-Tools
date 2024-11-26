@@ -76,3 +76,10 @@ jobs:
             ssh -i ~/.ssh/id_rsa ubuntu-1021342@145.24.223.64 -p 22 "echo 'SSH Test Connection Successful'"
 
           timeout: 300s  # Timeout in seconds (5 minutes)
+      - name: Debug SSH Action
+        run: |
+          echo "Starting SSH deployment..."
+          echo "Server IP: ${{ secrets.SERVER_IP }}"
+          echo "User: ${{ secrets.SERVER_USER }}"
+          echo "SSH Key: ${{ secrets.SERVER_SSH_KEY }}"
+        
