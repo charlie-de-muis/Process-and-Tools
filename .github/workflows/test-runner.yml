@@ -1,0 +1,18 @@
+name: Test Self-Hosted Runner
+
+on:
+  push:
+    branches:
+      - Refactoring  # Or any branch
+
+jobs:
+  test-runner:
+    runs-on: self-hosted
+    steps:
+      - name: Check Runner
+        run: echo "The self-hosted runner is working!"
+      - name: Show Environment
+        run: |
+          uname -a
+          whoami
+          pwd
