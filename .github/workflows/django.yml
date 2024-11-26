@@ -62,8 +62,13 @@ jobs:
           host: ${{ secrets.SERVER_IP }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
+          port: 22
           script: |
-            cd /path/to/your/repo  # Change to your Django project directory
-            git pull origin Refactoring  # Pull the latest changes from the Refactoring branch
-            source /path/to/venv/bin/activate  # Activate the virtual environment
-            pip install -r requirements.txt  # Install any new dependen
+            cd /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub
+            git pull origin Refactoring
+            source /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub/venv/bin
+            pip install -r requirements.txt
+            python manage.py migrate
+            python manage.py collectstatic --noinput
+            sudo systemctl restart django
+          timeout: 300  # Timeout in seconds (5 minutes)
