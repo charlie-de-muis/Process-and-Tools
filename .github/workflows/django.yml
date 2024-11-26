@@ -47,6 +47,8 @@ jobs:
         run: |
           pytest
         working-directory: ./CargoHub
+
+  # Check SSH Key Availability
   check_ssh:
     runs-on: self-hosted
     steps:
@@ -68,14 +70,14 @@ jobs:
       - name: SSH into server and deploy
         uses: appleboy/ssh-action@v0.1.0
         with:
-          host: 145.24.223.64
-          username: ubuntu-1021342
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: 22
+          host: 145.24.223.64  # Your server's IP address
+          username: ubuntu-1021342  # Your SSH username
+          key: ${{ secrets.SERVER_SSH_KEY }}  # The private key from GitHub secrets
+          port: 22  # Default SSH port
           script: |
             cd /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub
             git pull origin Refactoring
-            source /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub/venv/bin
+            source /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub/venv/bin/activate
             pip install -r requirements.txt
             python manage.py migrate
             sudo systemctl restart django
