@@ -47,6 +47,15 @@ jobs:
         run: |
           pytest
         working-directory: ./CargoHub
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Debug SSH Key Secret
+        run: |
+          echo "Checking if the SERVER_SSH_KEY secret is available"
+          echo "Secret is set"
+        env:
+          SERVER_SSH_KEY: ${{ secrets.SERVER_SSH_KEY }}
 
   # Deploy Job
   deploy:
@@ -61,55 +70,7 @@ jobs:
         with:
           host: 145.24.223.64
           username: ubuntu-1021342
-          key: -----BEGIN OPENSSH PRIVATE KEY-----
-            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
-            -----END OPENSSH PRIVATE KEY-----
+          key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           script: |
             cd /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub
