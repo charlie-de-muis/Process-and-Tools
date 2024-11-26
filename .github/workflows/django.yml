@@ -47,8 +47,8 @@ jobs:
         run: |
           pytest
         working-directory: ./CargoHub
-  check:
-    runs-on: ubuntu-latest
+  check_ssh:
+    runs-on: self-hosted
     steps:
       - name: Debug SSH Key Secret
         run: |
@@ -59,7 +59,7 @@ jobs:
 
   # Deploy Job
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: test
     steps:
       - name: Checkout code
