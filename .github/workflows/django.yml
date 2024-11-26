@@ -64,10 +64,15 @@ jobs:
           key: ${{ secrets.SERVER_SSH_KEY }}
           port: 22
           script: |
+            echo "Running deploy script"
             cd /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub
             git pull origin Refactoring
-            source /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub/venv/bin
+            source /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub/venv/bin/activate
             pip install -r requirements.txt
             python manage.py migrate
+            python manage.py collectstatic --noinput
             sudo systemctl restart django
+            # Add ssh verbose for debugging
+            ssh -i ~/.ssh/id_rsa ubuntu-1021342@145.24.223.64 -p 22 "echo 'SSH Test Connection Successful'"
+
           timeout: 300s  # Timeout in seconds (5 minutes)
