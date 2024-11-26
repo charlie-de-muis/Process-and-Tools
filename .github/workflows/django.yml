@@ -9,7 +9,7 @@ on:
 jobs:
   # Build Job
   build:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         python-version: [3.8, 3.9]
@@ -27,7 +27,7 @@ jobs:
 
   # Test Job
   test:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     needs: build
     strategy:
       matrix:
