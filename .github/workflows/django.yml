@@ -61,7 +61,7 @@ jobs:
 
   # Deploy Job
   deploy:
-    runs-on: [self-hosted, linux, x64]
+    runs-on: [self-hosted, Linux, X64]
     needs: test
     steps:
       - name: Checkout code
@@ -70,8 +70,8 @@ jobs:
       - name: SSH into server and deploy
         uses: appleboy/ssh-action@v0.1.0
         with:
-          host: 145.24.223.64  # Your server's IP address
-          username: ubuntu-1021342  # Your SSH username
+          host: ${{ secrets.SERVER_IP }}  # Your server's IP address
+          username: ${{ secrets.SERVER_USER }}  # Your SSH username
           key: ${{ secrets.SERVER_SSH_KEY }}  # The private key from GitHub secrets
           port: 22  # Default SSH port
           script: |
