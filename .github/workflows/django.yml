@@ -70,10 +70,10 @@ jobs:
       - name: SSH into server and deploy
         uses: appleboy/ssh-action@v0.1.0
         with:
-          host: ${{ secrets.SERVER_IP }}  # Your server's IP address
-          username: ${{ secrets.SERVER_USER }}  # Your SSH username
-          key: ${{ secrets.SERVER_SSH_KEY }}  # The private key from GitHub secrets
-          port: 22  # Default SSH port
+          host: ${{ secrets.SERVER_IP }}        # IP of your server
+          username: ${{ secrets.SERVER_USER }}   # Username for the SSH login
+          key: ${{ secrets.SERVER_SSH_KEY }}     # Private key stored in GitHub Secrets
+          port: 22                               # SSH port (default 22)
           script: |
             cd /home/ubuntu-1021342/Repo/Process-and-Tools/CargoHub
             git pull origin Refactoring
