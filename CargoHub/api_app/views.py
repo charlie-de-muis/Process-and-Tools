@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.conf import settings
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -33,8 +33,34 @@ class GenericView(APIView):
     model_instance = None  # Instance of the model used for DB operations
     serializer_class = None  # Used for serialization
 
+    def get_api_key(self, request):
+        """
+        Retrieve the API key from request headers.
+        """
+        return request.headers.get("X-API-Key")
+
+    def validate_api_key(self, request):
+        """
+        Validate the API key. Replace 'your-secret-api-key' with your actual key.
+        """
+        api_key = self.get_api_key(request)
+        if api_key != settings.API_KEY:
+            return False
+        return True
+
+    def handle_unauthorized(self):
+        """
+        Return a standard response for unauthorized access.
+        """
+        return JsonResponse(
+            {"error": "Unauthorized: Invalid or missing API key"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
     def get(self, request, *args, **kwargs):
-        # Fetch the model's ID from kwargs if it exists
+        if not self.validate_api_key(request):
+            return self.handle_unauthorized()
+
         model_instance = self.model_instance()  # Create an instance of the model
 
         if 'client_id' in kwargs:
@@ -52,12 +78,18 @@ class GenericView(APIView):
         return JsonResponse(clients, safe=False, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
+        if not self.validate_api_key(request):
+            return self.handle_unauthorized()
+
         model_instance = self.model_instance()  # Create an instance of the model
         client_data = request.data
         model_instance.add(client_data)  # Call the add method on the model instance
         return JsonResponse(client_data, status=status.HTTP_201_CREATED)
 
     def put(self, request, *args, **kwargs):
+        if not self.validate_api_key(request):
+            return self.handle_unauthorized()
+
         client_id = kwargs.get('client_id')
         if not client_id:
             return JsonResponse({"error": "client_id is required for update"}, status=status.HTTP_400_BAD_REQUEST)
@@ -68,6 +100,9 @@ class GenericView(APIView):
         return JsonResponse(client_data, status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
+        if not self.validate_api_key(request):
+            return self.handle_unauthorized()
+
         client_id = kwargs.get('client_id')
         if not client_id:
             return JsonResponse({"error": "client_id is required for deletion"}, status=status.HTTP_400_BAD_REQUEST)
@@ -75,6 +110,7 @@ class GenericView(APIView):
         model_instance = self.model_instance()  # Create an instance of the model
         model_instance.remove(client_id)  # Call the remove method to delete
         return JsonResponse({"message": "Client deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+
     
     
 class ClientView(GenericView):
