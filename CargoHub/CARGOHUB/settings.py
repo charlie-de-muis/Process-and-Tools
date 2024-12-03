@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-zzzuxflxsx#*s86sp$wsxen*^fqkl=7ra%$tbnlc!(ridys-24
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['145.24.223.64', 'localhost', '127.0.0.1']
 
 # settings.py
 API_KEY = "a1b2c3d4e5"
