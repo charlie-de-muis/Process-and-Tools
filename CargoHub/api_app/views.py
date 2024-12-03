@@ -1,5 +1,5 @@
 from django.shortcuts import render
-
+from django.conf import settings
 # Create your views here.
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -32,6 +32,30 @@ class GenericView(APIView):
     model_class = None  # Will be set dynamically in child views
     model_instance = None  # Instance of the model used for DB operations
     serializer_class = None  # Used for serialization
+    # api fix?
+    def get_api_key(self, request):
+        """
+        Retrieve the API key from request headers.
+        """
+        return request.headers.get("X-API-Key")
+
+    def validate_api_key(self, request):
+        """
+        Validate the API key. Replace 'your-secret-api-key' with your actual key.
+        """
+        api_key = self.get_api_key(request)
+        if api_key != settings.API_KEY:
+            return False
+        return True
+
+    def handle_unauthorized(self):
+        """
+        Return a standard response for unauthorized access.
+        """
+        return JsonResponse(
+            {"error": "Unauthorized: Invalid or missing API key"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
 
     def get(self, request, *args, **kwargs):
         # Fetch the model's ID from kwargs if it exists
