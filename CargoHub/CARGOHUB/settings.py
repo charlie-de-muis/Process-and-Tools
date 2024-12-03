@@ -26,7 +26,11 @@ SECRET_KEY = 'django-insecure-zzzuxflxsx#*s86sp$wsxen*^fqkl=7ra%$tbnlc!(ridys-24
 DEBUG = True
 
 ALLOWED_HOSTS = []
+
+# settings.py
 API_KEY = "a1b2c3d4e5"
+
+
 
 # Application definition
 
