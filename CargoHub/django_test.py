@@ -13,3 +13,4 @@ def test_api_app_status(client):
     # Assert that the status code is 200 OK
     assert response.status_code == status.HTTP_200_OK
 
+#WERKT HET AL
