@@ -1,0 +1,35 @@
+@startuml
+CargoHub <-- Client: CRUD request
+
+CargoHub -> Client: Authentication Request
+CargoHub <-- Client: Authentication Response
+
+CargoHub <-- CargoHub: Database handling 
+
+CargoHub -> Client: Return statuscode + response
+@enduml
+
+@startuml
+    |Client|
+    start
+    :Send GET request;
+
+    |System|
+    :Check API key;
+    if (Correct key?) then (yes)
+        |System|
+        :Search correct database table;
+        :Status = 200 OK;
+        :Return data and status;
+        |Client|
+        :Recieve data;
+        stop
+    else (no)
+        |System|
+        :Status 404 Access denied;
+        :Return status;
+        |Client|
+        :No access;
+        stop
+    endif
+@enduml
