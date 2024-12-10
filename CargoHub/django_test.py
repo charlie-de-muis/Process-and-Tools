@@ -1,6 +1,7 @@
 import pytest
 from django.urls import reverse
 from rest_framework import status
+import requests
 # HI I DID IT?????
 @pytest.mark.django_db
 def test_api_app_status(client):
@@ -12,5 +13,3 @@ def test_api_app_status(client):
 
     # Assert that the status code is 200 OK
     assert response.status_code == status.HTTP_200_OK
-
-#WERKT HET AL
