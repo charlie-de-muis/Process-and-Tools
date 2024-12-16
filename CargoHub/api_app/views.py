@@ -61,7 +61,7 @@ class GenericView(APIView):
         if not self.validate_api_key(request):
             return self.handle_unauthorized()
 
-        model_instance = self.model_instance()  # Create an instance of the model
+        model_instance = self.model_instance()
 
         if 'client_id' in kwargs:
             client_id = kwargs.get('client_id')
