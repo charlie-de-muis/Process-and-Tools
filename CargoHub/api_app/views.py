@@ -42,7 +42,7 @@ class GenericView(APIView):
 
     def validate_api_key(self, request):
         """
-        Validate the API key. Replace 'your-secret-api-key' with your actual key.
+        Validate the API key. 
         """
         api_key = self.get_api_key(request)
         if api_key != settings.API_KEY:
