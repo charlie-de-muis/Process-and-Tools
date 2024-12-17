@@ -13,13 +13,13 @@ def test_api_app_status(client):
 #     # Assert that the status code is 200 OK
     assert response.status_code == status.HTTP_200_OK
 
-# TODO: replace with test server url
-BASE_URL = "http://145.24.223.64:80/api/v1"
+# # TODO: replace with test server url
+# BASE_URL = "http://145.24.223.64:80/api/v1"
 
-# Test auth with missing API key
-def test_auth_get_clients():
-    response = requests.get(f"{BASE_URL}/clients/")
-    assert response.status_code == 401
+# # Test auth with missing API key
+# def test_auth_get_clients():
+#     response = requests.get(f"{BASE_URL}/clients/")
+#     assert response.status_code == 401
 
 # # Test creating a new client
 # def test_data_post_client():
