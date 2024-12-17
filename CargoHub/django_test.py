@@ -17,12 +17,16 @@ def test_api_app_status(client):
 BASE_URL = "http://145.24.223.64:80/api/v1"
 
 # Test auth with missing API key
+# Test auth with missing API key
 def test_auth_get_clients():
     response = requests.get(f"{BASE_URL}/clients/")
     assert response.status_code == 401
 
 # Test creating a new client
+
+# Test creating a new client
 def test_data_post_client():
+    header = {"X-API-Key": "a1b2c3d4e5"}
     header = {"X-API-Key": "a1b2c3d4e5"}
     client = {
         "id": 10000,
@@ -40,10 +44,17 @@ def test_data_post_client():
     assert response.status_code == 201
 
 # Test retrieving the client
+
+# Test retrieving the client
 def test_data_get_client():
     header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/clients/10000/", headers=header)
+    header = {"X-API-Key": "a1b2c3d4e5"}
+    response = requests.get(f"{BASE_URL}/clients/10000/", headers=header)
     assert response.status_code == 200
+    # Validate expected fields here if necessary
+
+# Test updating the client
     # Validate expected fields here if necessary
 
 # Test updating the client
@@ -51,16 +62,28 @@ def test_data_update_clients():
     header = {"X-API-Key": "a1b2c3d4e5"}
     data = {"name": "Updated Client Name"}
     response = requests.put(f"{BASE_URL}/clients/10000/", headers=header, json=data)
+    response = requests.put(f"{BASE_URL}/clients/10000/", headers=header, json=data)
     assert response.status_code == 200
+
+# Test deleting the client
 
 # Test deleting the client
 def test_data_delete_clients():
     header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.delete(f"{BASE_URL}/clients/10000/", headers=header)
     assert response.status_code == 204
+    response = requests.delete(f"{BASE_URL}/clients/10000/", headers=header)
+    assert response.status_code == 204
 
 # Test confirming client deletion
+# Test confirming client deletion
 def test_data_check_deleted_client():
+    header = {"X-API-Key": "a1b2c3d4e5"}
+    response = requests.get(f"{BASE_URL}/clients/10000/", headers=header)
+    assert response.status_code == 404  # Expect Not Found
+
+
+
     header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/clients/10000/", headers=header)
     assert response.status_code == 404  # Expect Not Found
@@ -78,6 +101,7 @@ def test_data_post_inventories():
     header = {"X-API-Key" : "a1b2c3d4e5"}
 
     inventory = {
+        "id": 20000,
         "id": 20000,
         "item_id": "P000001",
         "description": "Face-to-face clear-thinking complexity",
@@ -106,6 +130,8 @@ def test_data_post_inventories():
 def test_data_get_inventories():
     header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/inventories/20000/", headers=header)
+    header = {"X-API-Key": "a1b2c3d4e5"}
+    response = requests.get(f"{BASE_URL}/inventories/20000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
 
@@ -115,6 +141,7 @@ def test_data_update_inventories():
     data = {"item": "Updated Item Name"}
 
     response = requests.put(f"{BASE_URL}/inventories/20000/", headers=header, json=data)
+    response = requests.put(f"{BASE_URL}/inventories/20000/", headers=header, json=data)
     assert response.status_code == 200
     # IT-data-delete-inventories
 # IT-data-delete-inventories
@@ -123,12 +150,17 @@ def test_data_delete_inventories():
 
     response = requests.delete(f"{BASE_URL}/inventories/20000/", headers=header)
     assert response.status_code == 204
+    response = requests.delete(f"{BASE_URL}/inventories/20000/", headers=header)
+    assert response.status_code == 204
 # check if inventory is not found
 def test_data_check_deleted_inv():
     header = {"X-API-Key" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/inventories/20000/", headers=header)
+    response = requests.get(f"{BASE_URL}/inventories/20000/", headers=header)
     assert response.status_code == 404
+
+
 
 
 
@@ -142,6 +174,7 @@ def test_data_post_items():
     header = {"X-API-Key" : "a1b2c3d4e5"}
 
     items = {
+        "uid": "P500000",
         "uid": "P500000",
         "code": "sjQ23408K",
         "description": "Face-to-face clear-thinking complexity",
@@ -167,13 +200,17 @@ def test_data_post_items():
 def test_data_get_items():
     header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/items/P500000/", headers=header)
+    header = {"X-API-Key": "a1b2c3d4e5"}
+    response = requests.get(f"{BASE_URL}/items/P500000/", headers=header)
     assert response.status_code == 200
+    # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-items
 def test_data_update_items():
     header = {"X-API-Key": "a1b2c3d4e5"}
     data = {"description": "Updated Item Description"}
 
+    response = requests.put(f"{BASE_URL}/items/P500000/", headers=header, json=data)
     response = requests.put(f"{BASE_URL}/items/P500000/", headers=header, json=data)
     assert response.status_code == 200
 # IT-data-delete-items
@@ -182,12 +219,17 @@ def test_data_delete_items():
 
     response = requests.delete(f"{BASE_URL}/items/P500000/", headers=header)
     assert response.status_code == 204
+    response = requests.delete(f"{BASE_URL}/items/P500000/", headers=header)
+    assert response.status_code == 204
 # check if item is not found
 def test_data_check_delete_item():
     header = {"X-API-Key" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/items/P500000/", headers=header)
+    response = requests.get(f"{BASE_URL}/items/P500000/", headers=header)
     assert response.status_code == 404
+
+
 
 
 
@@ -195,12 +237,14 @@ def test_data_check_delete_item():
 # IT-auth-get-locations - checken of API key goed werkt
 def test_auth_get_locations():
     response = requests.get(f"{BASE_URL}/locations/")
+    response = requests.get(f"{BASE_URL}/locations/")
     assert response.status_code == 401
 # IT-data-post-locations - checken of uploaden goed gaat
 def test_data_post_locations():
     header = {"X-API-Key" : "a1b2c3d4e5"}
 
     locations = {
+        "id": 1000000,
         "id": 1000000,
         "warehouse_id": 1,
         "code": "A.1.0",
@@ -214,13 +258,17 @@ def test_data_post_locations():
 def test_data_get_locations():
     header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/locations/1000000/", headers=header)
+    header = {"X-API-Key": "a1b2c3d4e5"}
+    response = requests.get(f"{BASE_URL}/locations/1000000/", headers=header)
     assert response.status_code == 200
+    # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-locations
 def test_data_update_locations():
     header = {"X-API-Key": "a1b2c3d4e5"}
     data = {"address": "Updated Location Address"}
 
+    response = requests.put(f"{BASE_URL}/locations/1000000/", headers=header, json=data)
     response = requests.put(f"{BASE_URL}/locations/1000000/", headers=header, json=data)
     assert response.status_code == 200
 # IT-data-delete-locations
@@ -229,12 +277,17 @@ def test_data_delete_locations():
 
     response = requests.delete(f"{BASE_URL}/locations/1000000/", headers=header)
     assert response.status_code == 204
+    response = requests.delete(f"{BASE_URL}/locations/1000000/", headers=header)
+    assert response.status_code == 204
 # check if location is not found
 def test_data_check_delete_location():
     header = {"X-API-Key" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/locations/1000000/", headers=header)
+    response = requests.get(f"{BASE_URL}/locations/1000000/", headers=header)
     assert response.status_code == 404
+
+
 
 
 
@@ -360,8 +413,10 @@ def test_data_post_orders():
 # IT-data-get-orders - checken of je de verwachte data terug krijgt
 def test_data_get_orders():
     header = {"X-API-Key": "a1b2c3d4e5"}
+    header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/orders/100000/", headers=header)
     assert response.status_code == 200
+    # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-orders
 def test_data_update_orders():
@@ -376,12 +431,15 @@ def test_data_delete_orders():
 
     response = requests.delete(f"{BASE_URL}/orders/100000/", headers=header)
     assert response.status_code == 204
+    assert response.status_code == 204
 # check if order is not found
 def test_data_check_delete_orders():
     header = {"X-API-Key" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/orders/100000/", headers=header)
     assert response.status_code == 404
+
+
 
 
 
@@ -505,8 +563,10 @@ def test_data_post_shipments():
 # IT-data-get-shipments - checken of je de verwachte data terug krijgt
 def test_data_get_shipments():
     header = {"X-API-Key": "a1b2c3d4e5"}
+    header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/shipments/100000/", headers=header)
     assert response.status_code == 200
+    # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-shipments
 def test_data_update_shipments():
@@ -520,6 +580,7 @@ def test_data_delete_shipments():
     header = {"X-API-Key": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/shipments/100000/", headers=header)
+    assert response.status_code == 204
     assert response.status_code == 204
 # check if shipment is not found
 def test_data_check_delete_shipment():
@@ -558,8 +619,10 @@ def test_data_post_suppliers():
 # IT-data-get-suppliers - checken of je de verwachte data terug krijgt
 def test_data_get_suppliers():
     header = {"X-API-Key": "a1b2c3d4e5"}
+    header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/suppliers/100000/", headers=header)
     assert response.status_code == 200
+    # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-suppliers
 def test_data_update_suppliers():
@@ -574,12 +637,15 @@ def test_data_delete_suppliers():
 
     response = requests.delete(f"{BASE_URL}/suppliers/100000/", headers=header)
     assert response.status_code == 204
+    assert response.status_code == 204
 # check if supplier is not found
 def test_data_check_delete_suppliers():
     header = {"X-API-Key" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/suppliers/100000/", headers=header)
     assert response.status_code == 404
+
+
 
 
 
@@ -612,8 +678,10 @@ def test_data_post_transfers():
 # IT-data-get-transfers - checken of je de verwachte data terug krijgt
 def test_data_get_transfers():
     header = {"X-API-Key": "a1b2c3d4e5"}
+    header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/transfers/1000000/", headers=header)
     assert response.status_code == 200
+    # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-transfers
 def test_data_update_transfers():
@@ -627,6 +695,7 @@ def test_data_delete_transfers():
     header = {"X-API-Key": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/transfers/1000000/", headers=header)
+    assert response.status_code == 204
     assert response.status_code == 204
 # check if transfer is not found
 def test_data_check_delete_transfer():
@@ -666,8 +735,10 @@ def test_data_post_warehouses():
 # IT-data-get-warehouses - checken of je de verwachte data terug krijgt
 def test_data_get_warehouses():
     header = {"X-API-Key": "a1b2c3d4e5"}
+    header = {"X-API-Key": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/warehouses/100000/", headers=header)
     assert response.status_code == 200
+    # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-warehouses
 def test_data_update_warehouses():
@@ -681,6 +752,7 @@ def test_data_delete_warehouses():
     header = {"X-API-Key": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/warehouses/100000/", headers=header)
+    assert response.status_code == 204
     assert response.status_code == 204
 # check if warehouse is not found
 def test_data_check_delete_warehouse():
