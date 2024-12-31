@@ -1,0 +1,12 @@
+@startuml Sequence_diagram CargoHub
+
+    CargoHub <-- Client: CRUD request
+
+    CargoHub -> Client: Authentication Request
+    CargoHub <-- Client: Authentication Response
+
+    CargoHub <-- CargoHub: Database handling 
+
+    CargoHub -> Client: Return statuscode + response
+
+@enduml

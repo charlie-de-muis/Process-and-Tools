@@ -1,15 +1,5 @@
-@startuml
-CargoHub <-- Client: CRUD request
+@startuml Activity_diagram CargoHub
 
-CargoHub -> Client: Authentication Request
-CargoHub <-- Client: Authentication Response
-
-CargoHub <-- CargoHub: Database handling 
-
-CargoHub -> Client: Return statuscode + response
-@enduml
-
-@startuml
     |Client|
     start
     :Send GET request;
@@ -32,4 +22,5 @@ CargoHub -> Client: Return statuscode + response
         :No access;
         stop
     endif
+
 @enduml
