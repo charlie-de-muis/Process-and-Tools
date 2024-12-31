@@ -131,8 +131,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
-        'Basic': {
-            'type': 'basic'
+        'apiKeyAuth': {
+            'type': 'apiKey',
+            'name': 'API-KEY',  # The header name where the token is passed
+            'in': 'header'           # Indicates the token is passed in the request header
         }
-    }
+    },
+    'USE_SESSION_AUTH': False,  # Set to False if you're not using session authentication
 }
