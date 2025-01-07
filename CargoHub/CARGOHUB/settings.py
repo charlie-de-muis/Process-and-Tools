@@ -133,7 +133,7 @@ SWAGGER_SETTINGS = {
     'SECURITY_DEFINITIONS': {
         'apiKeyAuth': {
             'type': 'apiKey',
-            'name': 'API-KEY',  # The header name where the token is passed
+            'name': 'API_KEY_ADMIN',  # The header name where the token is passed
             'in': 'header'           # Indicates the token is passed in the request header
         }
     },

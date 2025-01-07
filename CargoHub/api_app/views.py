@@ -38,7 +38,7 @@ class GenericView(APIView):
         """
         Retrieve the API key from request headers.
         """
-        return request.headers.get("API-KEY")
+        return request.headers.get("API_KEY_ADMIN")
 
     def validate_api_key(self, request):
         """

@@ -26,8 +26,8 @@ def test_auth_get_clients():
 
 # Test creating a new client
 def test_data_post_client():
-    header = {"API-KEY": "a1b2c3d4e5"}
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     client = {
         "id": 10000,
         "name": "Raymond Inc",
@@ -47,9 +47,9 @@ def test_data_post_client():
 
 # Test retrieving the client
 def test_data_get_client():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/clients/10000/", headers=header)
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/clients/10000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
@@ -59,7 +59,7 @@ def test_data_get_client():
 
 # Test updating the client
 def test_data_update_clients():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     data = {"name": "Updated Client Name"}
     response = requests.put(f"{BASE_URL}/clients/10000/", headers=header, json=data)
     response = requests.put(f"{BASE_URL}/clients/10000/", headers=header, json=data)
@@ -69,7 +69,7 @@ def test_data_update_clients():
 
 # Test deleting the client
 def test_data_delete_clients():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.delete(f"{BASE_URL}/clients/10000/", headers=header)
     assert response.status_code == 204
     response = requests.delete(f"{BASE_URL}/clients/10000/", headers=header)
@@ -78,13 +78,13 @@ def test_data_delete_clients():
 # Test confirming client deletion
 # Test confirming client deletion
 def test_data_check_deleted_client():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/clients/10000/", headers=header)
     assert response.status_code == 404  # Expect Not Found
 
 
 
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/clients/10000/", headers=header)
     assert response.status_code == 404  # Expect Not Found
 
@@ -98,7 +98,7 @@ def test_auth_get_inventories():
     assert response.status_code == 401
 # IT-data-post-inventories - checken of uploaden goed gaat
 def test_data_post_inventories():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     inventory = {
         "id": 20000,
@@ -128,16 +128,16 @@ def test_data_post_inventories():
     assert response.status_code == 201
 # IT-data-get-inventories - checken of je de verwachte data terug krijgt
 def test_data_get_inventories():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/inventories/20000/", headers=header)
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/inventories/20000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
 
 # IT-data-update-inventories
 def test_data_update_inventories():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     data = {"item": "Updated Item Name"}
 
     response = requests.put(f"{BASE_URL}/inventories/20000/", headers=header, json=data)
@@ -146,7 +146,7 @@ def test_data_update_inventories():
     # IT-data-delete-inventories
 # IT-data-delete-inventories
 def test_data_delete_inventories():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/inventories/20000/", headers=header)
     assert response.status_code == 204
@@ -154,7 +154,7 @@ def test_data_delete_inventories():
     assert response.status_code == 204
 # check if inventory is not found
 def test_data_check_deleted_inv():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/inventories/20000/", headers=header)
     response = requests.get(f"{BASE_URL}/inventories/20000/", headers=header)
@@ -171,7 +171,7 @@ def test_auth_get_items():
     assert response.status_code == 401
 # IT-data-post-items - checken of uploaden goed gaat
 def test_data_post_items():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     items = {
         "uid": "P500000",
@@ -198,16 +198,16 @@ def test_data_post_items():
     assert response.status_code == 201
 # IT-data-get-items - checken of je de verwachte data terug krijgt
 def test_data_get_items():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/items/P500000/", headers=header)
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/items/P500000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-items
 def test_data_update_items():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     data = {"description": "Updated Item Description"}
 
     response = requests.put(f"{BASE_URL}/items/P500000/", headers=header, json=data)
@@ -215,7 +215,7 @@ def test_data_update_items():
     assert response.status_code == 200
 # IT-data-delete-items
 def test_data_delete_items():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/items/P500000/", headers=header)
     assert response.status_code == 204
@@ -223,7 +223,7 @@ def test_data_delete_items():
     assert response.status_code == 204
 # check if item is not found
 def test_data_check_delete_item():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/items/P500000/", headers=header)
     response = requests.get(f"{BASE_URL}/items/P500000/", headers=header)
@@ -241,7 +241,7 @@ def test_auth_get_locations():
     assert response.status_code == 401
 # IT-data-post-locations - checken of uploaden goed gaat
 def test_data_post_locations():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     locations = {
         "id": 1000000,
@@ -256,16 +256,16 @@ def test_data_post_locations():
     assert response.status_code == 201
 # IT-data-get-locations - checken of je de verwachte data terug krijgt
 def test_data_get_locations():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/locations/1000000/", headers=header)
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/locations/1000000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-locations
 def test_data_update_locations():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     data = {"address": "Updated Location Address"}
 
     response = requests.put(f"{BASE_URL}/locations/1000000/", headers=header, json=data)
@@ -273,7 +273,7 @@ def test_data_update_locations():
     assert response.status_code == 200
 # IT-data-delete-locations
 def test_data_delete_locations():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/locations/1000000/", headers=header)
     assert response.status_code == 204
@@ -281,7 +281,7 @@ def test_data_delete_locations():
     assert response.status_code == 204
 # check if location is not found
 def test_data_check_delete_location():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/locations/1000000/", headers=header)
     response = requests.get(f"{BASE_URL}/locations/1000000/", headers=header)
@@ -298,7 +298,7 @@ def test_auth_get_orders():
     assert response.status_code == 401
 # IT-data-post-orders - checken of uploaden goed gaat
 def test_data_post_orders():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     orders = {
         "id": 100000,
@@ -412,29 +412,29 @@ def test_data_post_orders():
     assert response.status_code == 201
 # IT-data-get-orders - checken of je de verwachte data terug krijgt
 def test_data_get_orders():
-    header = {"API-KEY": "a1b2c3d4e5"}
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/orders/100000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-orders
 def test_data_update_orders():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     data = {"status": "Updated Order Status"}
 
     response = requests.put(f"{BASE_URL}/orders/100000/", headers=header, json=data)
     assert response.status_code == 200
 # IT-data-delete-orders
 def test_data_delete_orders():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/orders/100000/", headers=header)
     assert response.status_code == 204
     assert response.status_code == 204
 # check if order is not found
 def test_data_check_delete_orders():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/orders/100000/", headers=header)
     assert response.status_code == 404
@@ -450,7 +450,7 @@ def test_auth_get_shipments():
     assert response.status_code == 401
 # IT-data-post-shipments - checken of uploaden goed gaat
 def test_data_post_shipments():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     shipments = {
         "id": 100000,
@@ -562,29 +562,29 @@ def test_data_post_shipments():
     assert response.status_code == 201
 # IT-data-get-shipments - checken of je de verwachte data terug krijgt
 def test_data_get_shipments():
-    header = {"API-KEY": "a1b2c3d4e5"}
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/shipments/100000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-shipments
 def test_data_update_shipments():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     data = {"tracking_number": "Updated Tracking Number"}
 
     response = requests.put(f"{BASE_URL}/shipments/100000/", headers=header, json=data)
     assert response.status_code == 200
 # IT-data-delete-shipments
 def test_data_delete_shipments():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/shipments/100000/", headers=header)
     assert response.status_code == 204
     assert response.status_code == 204
 # check if shipment is not found
 def test_data_check_delete_shipment():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/shipments/100000/", headers=header)
     assert response.status_code == 404
@@ -596,7 +596,7 @@ def test_auth_get_suppliers():
     assert response.status_code == 401
 # IT-data-post-suppliers - checken of uploaden goed gaat
 def test_data_post_suppliers():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     suppliers = {
         "id": 100000,
@@ -618,29 +618,29 @@ def test_data_post_suppliers():
     assert response.status_code == 201
 # IT-data-get-suppliers - checken of je de verwachte data terug krijgt
 def test_data_get_suppliers():
-    header = {"API-KEY": "a1b2c3d4e5"}
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/suppliers/100000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-suppliers
 def test_data_update_suppliers():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     data = {"name": "Updated Supplier Name"}
 
     response = requests.put(f"{BASE_URL}/suppliers/100000/", headers=header, json=data)
     assert response.status_code == 200
 # IT-data-delete-suppliers
 def test_data_delete_suppliers():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/suppliers/100000/", headers=header)
     assert response.status_code == 204
     assert response.status_code == 204
 # check if supplier is not found
 def test_data_check_delete_suppliers():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/suppliers/100000/", headers=header)
     assert response.status_code == 404
@@ -656,7 +656,7 @@ def test_auth_get_transfers():
     assert response.status_code == 401
 # IT-data-post-transfers - checken of uploaden goed gaat
 def test_data_post_transfers():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     transfers = {
         "id": 1000000,
@@ -677,29 +677,29 @@ def test_data_post_transfers():
     assert response.status_code == 201
 # IT-data-get-transfers - checken of je de verwachte data terug krijgt
 def test_data_get_transfers():
-    header = {"API-KEY": "a1b2c3d4e5"}
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/transfers/1000000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-transfers
 def test_data_update_transfers():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     data = {"status": "Updated Transfer Status"}
 
     response = requests.put(f"{BASE_URL}/transfers/1000000/", headers=header, json=data)
     assert response.status_code == 200
 # IT-data-delete-transfers
 def test_data_delete_transfers():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/transfers/1000000/", headers=header)
     assert response.status_code == 204
     assert response.status_code == 204
 # check if transfer is not found
 def test_data_check_delete_transfer():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/transfers/1000000/", headers=header)
     assert response.status_code == 404
@@ -711,7 +711,7 @@ def test_auth_get_warehouses():
     assert response.status_code == 401
 # IT-data-post-warehouses - checken of uploaden goed gaat
 def test_data_post_warehouses():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     warehouses = {
         "id": 100000,
@@ -734,29 +734,29 @@ def test_data_post_warehouses():
     assert response.status_code == 201
 # IT-data-get-warehouses - checken of je de verwachte data terug krijgt
 def test_data_get_warehouses():
-    header = {"API-KEY": "a1b2c3d4e5"}
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     response = requests.get(f"{BASE_URL}/warehouses/100000/", headers=header)
     assert response.status_code == 200
     # Validate expected fields here if necessary
     # Validate expected fields here if necessary
 # IT-data-update-warehouses
 def test_data_update_warehouses():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
     data = {"location": "Updated Warehouse Location"}
 
     response = requests.put(f"{BASE_URL}/warehouses/100000/", headers=header, json=data)
     assert response.status_code == 200
 # IT-data-delete-warehouses
 def test_data_delete_warehouses():
-    header = {"API-KEY": "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN": "a1b2c3d4e5"}
 
     response = requests.delete(f"{BASE_URL}/warehouses/100000/", headers=header)
     assert response.status_code == 204
     assert response.status_code == 204
 # check if warehouse is not found
 def test_data_check_delete_warehouse():
-    header = {"API-KEY" : "a1b2c3d4e5"}
+    header = {"API_KEY_ADMIN" : "a1b2c3d4e5"}
 
     response = requests.get(f"{BASE_URL}/warehouses/100000/", headers=header)
     assert response.status_code == 404
