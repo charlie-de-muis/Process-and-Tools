@@ -1,0 +1,40 @@
+@startuml Database_diagram CargoHub
+
+map Clients_table #Chartreuse {
+    id => INTEGER
+    name => TEXT
+    address => TEXT
+    city => TEXT
+    zip_code => TEXT
+    province => TEXT
+    country => TEXT
+    contact_name => TEXT
+    contact_phone => TEXT
+    contact_email => TEXT
+    created_at => TEXT
+    updated_at => TEXT
+}
+
+object Inventories_table
+
+object Item_groups_table
+
+object Item_lines_table
+
+object Item_types_table
+
+object Items_table
+
+object Locations_table
+
+object Orders_table
+
+object Shipments_table
+
+object Suppliers_table
+
+object Transfers_table
+
+object Warehouses_table
+
+@enduml

@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['145.24.223.64', 'localhost', '127.0.0.1']
 
 # settings.py
-API_KEY = "a1b2c3d4e5"
+API_KEY_ADMIN = "a1b2c3d4e5"
 
 
 
@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'api_app',
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -126,3 +127,15 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        'apiKeyAuth': {
+            'type': 'apiKey',
+            'name': 'API-KEY',  # The header name where the token is passed
+            'in': 'header'           # Indicates the token is passed in the request header
+        }
+    },
+    'USE_SESSION_AUTH': False,  # Set to False if you're not using session authentication
+}

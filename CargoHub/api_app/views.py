@@ -38,38 +38,14 @@ class GenericView(APIView):
         """
         Retrieve the API key from request headers.
         """
-        return request.headers.get("X-API-Key")
+        return request.headers.get("API-KEY")
 
     def validate_api_key(self, request):
         """
         Validate the API key. 
         """
         api_key = self.get_api_key(request)
-        if api_key != settings.API_KEY:
-            return False
-        return True
-
-    def handle_unauthorized(self):
-        """
-        Return a standard response for unauthorized access.
-        """
-        return JsonResponse(
-            {"error": "Unauthorized: Invalid or missing API key"},
-            status=status.HTTP_401_UNAUTHORIZED
-        )
-
-    def get_api_key(self, request):
-        """
-        Retrieve the API key from request headers.
-        """
-        return request.headers.get("X-API-Key")
-
-    def validate_api_key(self, request):
-        """
-        Validate the API key. Replace 'your-secret-api-key' with your actual key.
-        """
-        api_key = self.get_api_key(request)
-        if api_key != settings.API_KEY:
+        if api_key != settings.API_KEY_ADMIN:
             return False
         return True
 
@@ -88,53 +64,53 @@ class GenericView(APIView):
 
         model_instance = self.model_instance()
 
-        if 'client_id' in kwargs:
-            client_id = kwargs.get('client_id')
-            client = model_instance.get(client_id)  # Call the specific model's method
-            if client is None:
-                return JsonResponse({"error": "Client not found"}, status=status.HTTP_404_NOT_FOUND)
-            return JsonResponse(client, status=status.HTTP_200_OK)
+        if 'request_id' in kwargs:
+            request_id = kwargs.get('request_id')
+            model_method = model_instance.get(request_id)  # Call the specific model's method
+            if model_method is None:
+                return JsonResponse({"error": "ID not found"}, status=status.HTTP_404_NOT_FOUND)
+            return JsonResponse(model_method, status=status.HTTP_200_OK)
 
         # For the general case (e.g., fetch all clients)
-        clients = model_instance.gets()  # Fetch all clients
-        if not clients:
-            return JsonResponse({"message": "No clients found"}, status=status.HTTP_404_NOT_FOUND)
+        model_multiple = model_instance.gets()  # Fetch all clients
+        if not model_multiple:
+            return JsonResponse({"message": "No list found"}, status=status.HTTP_404_NOT_FOUND)
 
-        return JsonResponse(clients, safe=False, status=status.HTTP_200_OK)
+        return JsonResponse(model_multiple, safe=False, status=status.HTTP_200_OK)
 
     def post(self, request, *args, **kwargs):
         if not self.validate_api_key(request):
             return self.handle_unauthorized()
 
         model_instance = self.model_instance()  # Create an instance of the model
-        client_data = request.data
-        model_instance.add(client_data)  # Call the add method on the model instance
-        return JsonResponse(client_data, status=status.HTTP_201_CREATED)
+        request_data = request.data
+        model_instance.add(request_data)  # Call the add method on the model instance
+        return JsonResponse(request_data, status=status.HTTP_201_CREATED)
 
     def put(self, request, *args, **kwargs):
         if not self.validate_api_key(request):
             return self.handle_unauthorized()
 
-        client_id = kwargs.get('client_id')
-        if not client_id:
-            return JsonResponse({"error": "client_id is required for update"}, status=status.HTTP_400_BAD_REQUEST)
+        request_id = kwargs.get('request_id')
+        if not request_id:
+            return JsonResponse({"error": "request_id is required for update"}, status=status.HTTP_400_BAD_REQUEST)
 
         model_instance = self.model_instance()  # Create an instance of the model
-        client_data = request.data
-        model_instance.update(client_id, client_data)  # Update client data
-        return JsonResponse(client_data, status=status.HTTP_200_OK)
+        request_data = request.data
+        model_instance.update(request_id, request_data)  # Update client data
+        return JsonResponse(request_data, status=status.HTTP_200_OK)
 
     def delete(self, request, *args, **kwargs):
         if not self.validate_api_key(request):
             return self.handle_unauthorized()
 
-        client_id = kwargs.get('client_id')
-        if not client_id:
-            return JsonResponse({"error": "client_id is required for deletion"}, status=status.HTTP_400_BAD_REQUEST)
+        request_id = kwargs.get('request_id')
+        if not request_id:
+            return JsonResponse({"error": "request_id is required for deletion"}, status=status.HTTP_400_BAD_REQUEST)
 
         model_instance = self.model_instance()  # Create an instance of the model
-        model_instance.remove(client_id)  # Call the remove method to delete
-        return JsonResponse({"message": "Client deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        model_instance.remove(request_id)  # Call the remove method to delete
+        return JsonResponse({"message": "ID deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
 
     
     

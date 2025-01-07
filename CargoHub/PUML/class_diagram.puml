@@ -1,0 +1,172 @@
+@startuml CargoHub Class Diagram
+
+    skinparam class {
+    BackgroundColor LightPink
+    }
+    skinparam stereotypeCBackgroundColor Pink
+
+
+    class Base {
+        +GetTimestamp(): DateTime
+    }
+
+    class db_start {
+        +create_database(): void
+        +connection(database_name): connection
+    }
+
+    together{
+    class Inventories {
+        +Gets(): List<Inventories>
+        +Get(inventory_id): Inventories
+        +Get_inventories_for_item(item_id): List<Inventories>
+        +Get_inventory_totals_for_item(item_id): Dictionary
+        +Add(inventory): void
+        +Update(inventory_id, inventory): void
+        +Delete(inventory_id): void
+        +Convert_to_dict(inv): Dictionary
+    }
+
+    class Suppliers {
+        +Gets(): List<Suppliers>
+        +Get(supplier_id): Suppliers
+        +Add(supplier): void
+        +Update(supplier_id, supplier): void
+        +Delete(supplier_id): void
+        +Convert_to_dict(supplier): Dictionary
+    }
+    }
+
+    together{
+    class Item_Groups {
+        +Gets(): List<Item_Groups>
+        +Get(item_groups_id): Item_Groups
+        +Add(item_group): void
+        +Update(item_group_id, item_group): void
+        +Delete(item_group_id): void
+        +Convert_to_dict(item_group): Dictionary
+    }
+
+    class Item_Lines {
+        +Gets(): List<Item_Lines>
+        +Get(item_line_id): Item_Lines
+        +Add(item_line): void
+        +Update(item_line_id, item_line): void
+        +Delete(item_line_id): void
+    }
+
+    class Item_Types {
+        +Gets(): List<Item_Types>
+        +Get(item_type_id): Item_Types
+        +Add(item_type): void
+        +Update(item_type_id, item_type): void
+        +Delete(item_type_id): void
+        +Convert_to_dict(item_type): Dictionary
+    }
+
+    class Items {
+        +Gets(): List<Items>
+        +Get(item_id): Items
+        +Get_items_for_item_line(item_line_id): List<Items>
+        +Get_items_for_item_group(item_group_id): List<Items>
+        +Get_items_for_item_type(item_type_id): List<Items>
+        +Get_items_for_supplier(supplier_id): List<Items>
+        +Add(inventory): void
+        +Update(inventory_id, inventory): void
+        +Delete(inventory_id): void
+        +Convert_to_dict(item): Dictionary
+    }
+    }
+
+    together{
+    class Locations {
+        +Gets(): List<Locations>
+        +Get(location_id): Locations
+        +Get_locations_in_warehouse(warehouse_id): List<Locations>
+        +Add(location): void
+        +Update(location_id, location): void
+        +Remove(location_id): void
+        +Convert_to_dict(location): Dictionary
+    }
+
+    class Warehouses {
+        +Gets(): List<Warehouses>
+        +Get(warehouse_id): Warehouses
+        +Add(warehouse_group): void
+        +Update(warehouse_id, warehouse): void
+        +Delete(warehouse_id): void
+        +Convert_to_dict(warehouse): Dictionary
+    }
+    }
+
+    class Orders {
+        +Gets(): List<Orders>
+        +Get(order_id): Orders
+        +Get_items_in_order(order_id): List<Items>
+        +Get_orders_in_shipment(shipment_id): List<Order_id>
+        +Get_orders_for_client(client_id): List<Orders>
+        +Add(order): void
+        +Update(order_id, order): void
+        +Remove(order_id): void
+        +Convert_to_dict(order): Dictionary
+    }
+
+    together{
+    class Clients {
+        +Gets(): List<Clients>
+        +Get(client_id): Clients
+        +Add(client): void
+        +Update(client_id, client): void
+        +Remove(client_id): void
+    }
+
+    class Shipments {
+        +Gets(): List<Shipments>
+        +Get(shipment_id): Shipments
+        +Get_items_in_shipment(shipment_id): List<Items>
+        +Add(Shipments): void
+        +Update(shipment_id, shipment): void
+        +Update_items_in_shipment(shipment_id, items): void
+        +Remove(shipment_id): void
+        +Convert_to_dict(shipment): Dictionary
+    }
+    }
+
+    class Transfers {
+        +Gets(): List<Transfers>
+        +Get(transfer_id): Transfers
+        +Get_items_in_transfer(transfer_id): List<Items>
+        +Add(transfer): void
+        +Update(transer_id, transfer): void
+        +Remove(transfer_id): void
+        +Convert_to_dict(transfer): Dictionary
+    }
+
+
+
+    Base <|-- Clients
+    Base <|-- Inventories
+    Base <|-- Item_Groups
+    Base <|-- Item_Lines
+    Base <|-- Item_Types
+    Base <|-- Items
+    Base <|-- Locations
+    Base <|-- Orders
+    Base <|-- Shipments
+    Base <|-- Suppliers
+    Base <|-- Transfers
+    Base <|-- Warehouses
+
+
+    Inventories  o--  Items 
+    Items o-- Item_Groups
+    Items o-- Item_Lines
+    Items o-- Item_Types
+    Items o-- Suppliers
+    Locations o-- Warehouses
+    Orders o-- Items
+    Orders o-- Shipments
+    Orders o-- Clients
+
+@enduml
+

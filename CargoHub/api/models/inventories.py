@@ -277,7 +277,7 @@ class Inventories(Base):
             'item_id': inv[1],
             'description': inv[2],
             'item_reference': inv[3],
-            'locations': locations,  # The corrected list of locations
+            'locations': locations,  
             'total_on_hand': inv[5],
             'total_expected': inv[6],
             'total_ordered': inv[7],
