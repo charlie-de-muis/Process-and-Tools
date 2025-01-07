@@ -2,7 +2,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 import requests
-
+#please
 # HI I DID IT?????
 @pytest.mark.django_db
 def test_api_app_status(client):
