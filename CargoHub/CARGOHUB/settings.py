@@ -28,7 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = ['145.24.223.64', 'localhost', '127.0.0.1']
 
 # settings.py
-API_KEY_ADMIN = "a1b2c3d4e5"
+APIKEYADMIN = "a1b2c3d4e5"
 
 
 

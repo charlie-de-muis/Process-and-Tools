@@ -38,14 +38,17 @@ class GenericView(APIView):
         """
         Retrieve the API key from request headers.
         """
-        return request.headers.get("API_KEY_ADMIN")
+        return request.headers.get("APIKEYADMIN")
+    
 
     def validate_api_key(self, request):
         """
         Validate the API key. 
         """
         api_key = self.get_api_key(request)
-        if api_key != settings.API_KEY_ADMIN:
+        print(f"Extracted API Key: {api_key}")
+        print(f"Expected API Key: {settings.APIKEYADMIN}")
+        if api_key != settings.APIKEYADMIN:
             return False
         return True
 
