@@ -15,11 +15,11 @@ def get_default_value(field_name):
     else:
         return "-"  # Default string value for other fields
 
-# Connect to SQLite database with timeout to avoid locking issues
+# Connect to SQLite database
 conn = sqlite3.connect(DB_FILE, timeout=10)
 cursor = conn.cursor()
 
-# Function to insert JSON data into SQLite dynamically
+# Function to insert JSON data into SQLite
 def insert_json_data(json_file, table_name):
     with open(json_file, "r") as f:
         data = json.load(f)
@@ -32,15 +32,15 @@ def insert_json_data(json_file, table_name):
 
     for record in data:
         # Prepare columns, values, and placeholders for insertion
-        columns = ", ".join(record.keys())  # Use keys as column names
-        placeholders = ", ".join(["?"] * len(record))  # Use placeholders for values
+        columns = ", ".join(record.keys())  
+        placeholders = ", ".join(["?"] * len(record))
 
         # Handle lists and dictionaries in the record
         for key, value in record.items():
             if isinstance(value, list) or isinstance(value, dict):
                 record[key] = json.dumps(value)  # Convert list or dict to JSON string
 
-        # Replace missing values with default values dynamically
+        # Replace missing values with default values
         values = [record.get(key, get_default_value(key)) for key in record.keys()]
 
         # Check if the 'id' already exists in the table, and skip insertion if so
@@ -52,11 +52,11 @@ def insert_json_data(json_file, table_name):
                 all_records_uploaded = False
                 continue  # Skip this record if the ID already exists
 
-        # Construct the SQL INSERT statement
+        
         sql = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders})"
         
         try:
-            # Execute the INSERT statement
+            
             cursor.execute(sql, tuple(values))
         except sqlite3.IntegrityError as e:
             all_records_uploaded = False
