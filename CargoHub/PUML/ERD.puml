@@ -1,0 +1,111 @@
+@startuml CargoHub ERD
+
+entity Base {
+    +GetTimestamp(): DateTime
+}
+
+entity Inventories {
+    * inventory_id : Integer
+    --
+    +Get_inventories_for_item(item_id): List<Inventories>
+    +Get_inventory_totals_for_item(item_id): Dictionary
+    +Convert_to_dict(inv): Dictionary
+}
+
+entity Items {
+    * item_id : Integer
+    --
+    +Get_items_for_item_line(item_line_id): List<Items>
+    +Get_items_for_item_group(item_group_id): List<Items>
+    +Get_items_for_item_type(item_type_id): List<Items>
+    +Get_items_for_supplier(supplier_id): List<Items>
+    +Convert_to_dict(item): Dictionary
+}
+
+entity Suppliers {
+    * supplier_id : Integer
+    --
+    +Convert_to_dict(supplier): Dictionary
+}
+
+entity Item_Groups {
+    * item_group_id : Integer
+    --
+    +Convert_to_dict(item_group): Dictionary
+}
+
+entity Item_Lines {
+    * item_line_id : Integer
+}
+
+entity Item_Types {
+    * item_type_id : Integer
+    --
+    +Convert_to_dict(item_type): Dictionary
+}
+
+entity Locations {
+    * location_id : Integer
+    --
+    +Get_locations_in_warehouse(warehouse_id): List<Locations>
+    +Convert_to_dict(location): Dictionary
+}
+
+entity Warehouses {
+    * warehouse_id : Integer
+    --
+    +Convert_to_dict(warehouse): Dictionary
+}
+
+entity Orders {
+    * order_id : Integer
+    --
+    +Get_items_in_order(order_id): List<Items>
+    +Get_orders_in_shipment(shipment_id): List<Order_id>
+    +Get_orders_for_client(client_id): List<Orders>
+    +Convert_to_dict(order): Dictionary
+}
+
+entity Clients {
+    * client_id : Integer
+}
+
+entity Shipments {
+    * shipment_id : Integer
+    --
+    +Get_items_in_shipment(shipment_id): List<Items>
+    +Update_items_in_shipment(shipment_id, items): void
+    +Convert_to_dict(shipment): Dictionary
+}
+
+entity Transfers {
+    * transfer_id : Integer
+    --
+    +Get_items_in_transfer(transfer_id): List<Items>
+    +Convert_to_dict(transfer): Dictionary
+}
+
+Base ||--o{ Clients
+Base ||--o{ Inventories
+Base ||--o{ Item_Groups
+Base ||--o{ Item_Lines
+Base ||--o{ Item_Types
+Base ||--o{ Items
+Base ||--o{ Locations
+Base ||--o{ Orders
+Base ||--o{ Shipments
+Base ||--o{ Suppliers
+Base ||--o{ Transfers
+Base ||--o{ Warehouses
+
+Inventories }o--|| Items 
+Items ||--|| Item_Groups
+Items ||--|| Item_Lines
+Items ||--|| Item_Types
+Items ||--|| Suppliers
+Locations ||--|| Warehouses
+Orders ||--o{ Items
+Orders ||--o{ Shipments
+Orders ||--|| Clients
+
+@enduml
