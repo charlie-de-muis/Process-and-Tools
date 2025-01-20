@@ -98,7 +98,6 @@ class Item_Groups(Base):
         try:
             cursor = conn.cursor()
 
-            # Check if the client exists
             cursor.execute("SELECT * FROM item_groups WHERE id = ?", (item_group_id,))
             item_group_old = cursor.fetchone()
             if item_group_old is None:

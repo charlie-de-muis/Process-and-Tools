@@ -38,7 +38,6 @@ class Inventories(Base):
         cursor = conn.cursor()
 
         try:
-            # Use the correct placeholder "?" for SQLite
             query = "SELECT * FROM inventories WHERE id = ?"
             cursor.execute(query, (inventory_id,))  # Pass the client_id as a tuple
             inv = cursor.fetchone()  # Fetch a single row
@@ -57,79 +56,77 @@ class Inventories(Base):
             cursor.close()
             conn.close()
 
-    # def get_inventories_for_item(self, item_id):
-    #     conn = self.db.connection(self.dbfile)
-    #     if conn is None:
-    #         print("DB connection failed")
-    #         return None  # Exit if connection fails
+    def get_inventories_for_item(self, item_id):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
         
-    #     try:
-    #         cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-    #         # Parameterized query to prevent SQL injection
-    #         query = "SELECT * FROM inventories WHERE item_id = ?"
-    #         cursor.execute(query, (item_id,))
+            query = "SELECT * FROM inventories WHERE item_id = ?"
+            cursor.execute(query, (item_id,))
             
-    #         inventories = cursor.fetchall()  # Fetch all records matching the item_id
+            inventories = cursor.fetchall()  # Fetch all records matching the item_id
 
-    #         if not inventories:
-    #             print(f"No inventories found for item ID {item_id}")
-    #             return []  # Return empty list if no records are found
+            if not inventories:
+                print(f"No inventories found for item ID {item_id}")
+                return []  # Return empty list if no records are found
 
-    #         return inventories  # Return the list of inventory records
+            return inventories  # Return the list of inventory records
         
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
-    #         return None
-    #     finally:
-    #         cursor.close()
-    #         conn.close()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
 
-    # def get_inventory_totals_for_item(self, item_id):
-        # result = {
-        #     "total_expected": 0,
-        #     "total_ordered": 0,
-        #     "total_allocated": 0,
-        #     "total_available": 0
-        # }
+    def get_inventory_totals_for_item(self, item_id):
+        result = {
+            "total_expected": 0,
+            "total_ordered": 0,
+            "total_allocated": 0,
+            "total_available": 0
+        }
 
-        # conn = self.db.connection(self.dbfile)
-        # if conn is None:
-        #     print("DB connection failed")
-        #     return None  # Exit if connection fails
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
         
-        # try:
-        #     cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-        #     # Parameterized query to get totals for each column
-        #     query = """
-        #         SELECT total_expected, total_ordered, total_allocated, total_available
-        #         FROM inventories
-        #         WHERE item_id = ?
-        #     """
-        #     cursor.execute(query, (item_id,))
+            query = """
+                SELECT total_expected, total_ordered, total_allocated, total_available
+                FROM inventories
+                WHERE item_id = ?
+            """
+            cursor.execute(query, (item_id,))
             
-        #     inventories = cursor.fetchall()  # Fetch all inventory records
+            inventories = cursor.fetchall()  # Fetch all inventory records
 
-        #     if not inventories:
-        #         print(f"No inventories found for item ID {item_id}")
-        #         return result  # Return default result if no records found
+            if not inventories:
+                print(f"No inventories found for item ID {item_id}")
+                return result  # Return default result if no records found
 
-        #     # Summing up the totals for the given item_id
-        #     for inventory in inventories:
-        #         result["total_expected"] += inventory[0]
-        #         result["total_ordered"] += inventory[1]
-        #         result["total_allocated"] += inventory[2]
-        #         result["total_available"] += inventory[3]
+            # Summing up the totals for the given item_id
+            for inventory in inventories:
+                result["total_expected"] += inventory[0]
+                result["total_ordered"] += inventory[1]
+                result["total_allocated"] += inventory[2]
+                result["total_available"] += inventory[3]
 
-        #     return result  # Return the calculated totals
+            return result  # Return the calculated totals
         
-        # except Exception as e:
-        #     print(f"An error occurred: {e}")
-        #     return None
-        # finally:
-        #     cursor.close()
-        #     conn.close()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
 
     def add(self, inventory):
         conn = self.db.connection(self.dbfile)
@@ -151,7 +148,7 @@ class Inventories(Base):
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);"""
         
         location = json.dumps(inventory['locations'])
-        # Preparing the data tuple, including serializing locations as a JSON string
+        # Preparing the data tuple
         data = (
             inventory['id'],
             inventory['item_id'],
@@ -262,12 +259,11 @@ class Inventories(Base):
         Converts the inventory tuple fetched from the database into a dictionary
         with the structure of the given JSON. Handles 'locations' properly.
         """
-        locations_str = inv[4]  # The 'locations' field from the database
+        locations_str = inv[4]  
         
         # Check if locations contain square brackets and strip them out
         if locations_str:
-            # Remove square brackets if they exist and then split by commas
-            locations_str = locations_str.strip('[]')  # Strip any square brackets
+            locations_str = locations_str.strip('[]')  
             locations = [int(loc) for loc in locations_str.split(',')] if locations_str else []
         else:
             locations = []

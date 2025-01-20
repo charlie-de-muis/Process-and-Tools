@@ -50,91 +50,91 @@ class Orders(Base):
         conn.close()
         return self.convert_to_dict(order)
 
-    # def get_items_in_order(self, order_id):
-    #     conn = self.db.connection(self.dbfile)
-    #     if conn is None:
-    #         print("DB connection failed")
-    #         return None  # Exit if connection fails
+    def get_items_in_order(self, order_id):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
         
-    #     try:
-    #         cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-    #         # Query to get the order by id
-    #         query = "SELECT items FROM orders WHERE id = ?"
-    #         cursor.execute(query, (order_id,))
+            # Query to get the order by id
+            query = "SELECT items FROM orders WHERE id = ?"
+            cursor.execute(query, (order_id,))
 
-    #         order = cursor.fetchone()  # Fetch the single order
+            order = cursor.fetchone()  # Fetch the single order
 
-    #         if order is None:
-    #             print(f"No order found with id {order_id}")
-    #             return None
+            if order is None:
+                print(f"No order found with id {order_id}")
+                return None
 
-    #         return order[0]  # Return the 'items' field (assuming it is a JSON array or similar)
+            return order[0]  # Return the 'items' field 
 
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
-    #         return None
-    #     finally:
-    #         cursor.close()
-    #         conn.close()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
 
-    # def get_orders_in_shipment(self, shipment_id):
-    #     conn = self.db.connection(self.dbfile)
-    #     if conn is None:
-    #         print("DB connection failed")
-    #         return None  # Exit if connection fails
+    def get_orders_in_shipment(self, shipment_id):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
         
-    #     try:
-    #         cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-    #         # Query to get all orders that belong to the given shipment_id
-    #         query = "SELECT id FROM orders WHERE shipment_id = ?"
-    #         cursor.execute(query, (shipment_id,))
+            # Query to get all orders that belong to the given shipment_id
+            query = "SELECT id FROM orders WHERE shipment_id = ?"
+            cursor.execute(query, (shipment_id,))
 
-    #         orders = cursor.fetchall()  # Fetch all orders for the shipment
+            orders = cursor.fetchall()  # Fetch all orders for the shipment
 
-    #         if not orders:
-    #             print(f"No orders found for shipment_id {shipment_id}")
-    #             return []
+            if not orders:
+                print(f"No orders found for shipment_id {shipment_id}")
+                return []
 
-    #         return [order[0] for order in orders]  # Return a list of order ids
+            return [order[0] for order in orders]  # Return a list of order ids
 
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
-    #         return None
-    #     finally:
-    #         cursor.close()
-    #         conn.close()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
 
-    # def get_orders_for_client(self, client_id):
-        # conn = self.db.connection(self.dbfile)
-        # if conn is None:
-        #     print("DB connection failed")
-        #     return None  # Exit if connection fails
+    def get_orders_for_client(self, client_id):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
         
-        # try:
-        #     cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-        #     # Query to get all orders where the client_id matches either 'ship_to' or 'bill_to'
-        #     query = """
-        #         SELECT * FROM orders WHERE ship_to = ? OR bill_to = ?
-        #     """
-        #     cursor.execute(query, (client_id, client_id))
+            # Query to get all orders where the client_id matches either 'ship_to' or 'bill_to'
+            query = """
+                SELECT * FROM orders WHERE ship_to = ? OR bill_to = ?
+            """
+            cursor.execute(query, (client_id, client_id))
 
-        #     orders = cursor.fetchall()  # Fetch all matching orders
+            orders = cursor.fetchall()  # Fetch all matching orders
 
-        #     if not orders:
-        #         print(f"No orders found for client_id {client_id}")
-        #         return []
+            if not orders:
+                print(f"No orders found for client_id {client_id}")
+                return []
 
-        #     return orders  # Return the list of orders
+            return orders  # Return the list of orders
 
-        # except Exception as e:
-        #     print(f"An error occurred: {e}")
-        #     return None
-        # finally:
-        #     cursor.close()
-        #     conn.close()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
 
     def add(self, order):
         conn = self.db.connection(self.dbfile)
@@ -284,123 +284,132 @@ class Orders(Base):
             cursor.close()
             conn.close()
 
-    # def update_items_in_order(self, order_id, items):
-    #     conn = self.db.connection(self.dbfile)
-    #     if conn is None:
-    #         print("DB connection failed")
-    #         return None  # Exit if connection fails
+    def update_items_in_order(self, order_id, items):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
         
-    #     try:
-    #         cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-    #         # Get the current order's items from the database
-    #         query = "SELECT items FROM orders WHERE id = ?"
-    #         cursor.execute(query, (order_id,))
-    #         order = cursor.fetchone()
+            # Check if the order exists
+            query = "SELECT items FROM orders WHERE id = ?"
+            cursor.execute(query, (order_id,))
+            order = cursor.fetchone()
 
-    #         if order is None:
-    #             print(f"No order found with id {order_id}")
-    #             return None
+            if order is None:
+                print(f"No order found with id {order_id}")
+                return None
 
-    #         current_items = order[0]  # Assuming items are stored in a JSON-like column
+            current_items = json.loads(order[0]) if order[0] else []
 
-    #         # Remove items that are no longer in the new order
-    #         for current_item in current_items:
-    #             found = False
-    #             for new_item in items:
-    #                 if current_item["item_id"] == new_item["item_id"]:
-    #                     found = True
-    #                     break
-    #             if not found:
-    #                 # Adjust inventory for removed item
-    #                 inventories = self.get_inventories_for_item(current_item["item_id"])
-    #                 min_ordered = float('inf')
-    #                 min_inventory = None
-    #                 for inventory in inventories:
-    #                     if inventory["total_allocated"] < min_ordered:
-    #                         min_ordered = inventory["total_allocated"]
-    #                         min_inventory = inventory
-    #                 if min_inventory:
-    #                     min_inventory["total_allocated"] -= current_item["amount"]
-    #                     min_inventory["total_expected"] = min_inventory["total_on_hand"] + min_inventory["total_ordered"]
-    #                     self.update_inventory(min_inventory["id"], min_inventory)
+            # Remove items that are no longer in the new order
+            for current_item in current_items:
+                if not any(new_item["item_id"] == current_item["item_id"] for new_item in items):
+                    # Adjust inventory for removed item
+                    inventories = self.get_inventories_for_item(current_item["item_id"])
+                    min_ordered = float('inf')
+                    min_inventory = None
+                    for inventory in inventories:
+                        if inventory["total_allocated"] < min_ordered:
+                            min_ordered = inventory["total_allocated"]
+                            min_inventory = inventory
+                    if min_inventory:
+                        min_inventory["total_allocated"] -= current_item["amount"]
+                        min_inventory["total_expected"] = min_inventory["total_on_hand"] + min_inventory["total_ordered"]
+                        self.update_inventory(min_inventory["id"], min_inventory)
 
-    #         # Add or update items in the order
-    #         for current_item in current_items:
-    #             for new_item in items:
-    #                 if current_item["item_id"] == new_item["item_id"]:
-    #                     # Adjust inventory for updated item
-    #                     inventories = self.get_inventories_for_item(current_item["item_id"])
-    #                     min_ordered = float('inf')
-    #                     min_inventory = None
-    #                     for inventory in inventories:
-    #                         if inventory["total_allocated"] < min_ordered:
-    #                             min_ordered = inventory["total_allocated"]
-    #                             min_inventory = inventory
-    #                     if min_inventory:
-    #                         min_inventory["total_allocated"] += new_item["amount"] - current_item["amount"]
-    #                         min_inventory["total_expected"] = min_inventory["total_on_hand"] + min_inventory["total_ordered"]
-    #                         self.update_inventory(min_inventory["id"], min_inventory)
+            # Add or update items in the order
+            for new_item in items:
+                for current_item in current_items:
+                    if current_item["item_id"] == new_item["item_id"]:
+                        # Adjust inventory for updated item
+                        inventories = self.get_inventories_for_item(current_item["item_id"])
+                        min_ordered = float('inf')
+                        min_inventory = None
+                        for inventory in inventories:
+                            if inventory["total_allocated"] < min_ordered:
+                                min_ordered = inventory["total_allocated"]
+                                min_inventory = inventory
+                        if min_inventory:
+                            min_inventory["total_allocated"] += new_item["amount"] - current_item["amount"]
+                            min_inventory["total_expected"] = min_inventory["total_on_hand"] + min_inventory["total_ordered"]
+                            self.update_inventory(min_inventory["id"], min_inventory)
+                        break
+                else:
+                    # New item, adjust inventory
+                    inventories = self.get_inventories_for_item(new_item["item_id"])
+                    min_ordered = float('inf')
+                    min_inventory = None
+                    for inventory in inventories:
+                        if inventory["total_allocated"] < min_ordered:
+                            min_ordered = inventory["total_allocated"]
+                            min_inventory = inventory
+                    if min_inventory:
+                        min_inventory["total_allocated"] += new_item["amount"]
+                        min_inventory["total_expected"] = min_inventory["total_on_hand"] + min_inventory["total_ordered"]
+                        self.update_inventory(min_inventory["id"], min_inventory)
 
-    #         # Update the order's items in the database
-    #         update_query = """
-    #             UPDATE orders SET items = ?, updated_at = ? WHERE id = ?
-    #         """
-    #         cursor.execute(update_query, (json.dumps(items), self.get_timestamp(), order_id))
+            # Update the order's items in the database
+            update_query = """
+                UPDATE orders SET items = ?, updated_at = ? WHERE id = ?
+            """
+            cursor.execute(update_query, (json.dumps(items), self.get_timestamp(), order_id))
 
-    #         # Commit changes to the database
-    #         conn.commit()
+            # Commit changes to the database
+            conn.commit()
 
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
-    #         conn.rollback()  # Rollback if any error occurs
-    #     finally:
-    #         cursor.close()
-    #         conn.close()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            conn.rollback()  # Rollback if any error occurs
+        finally:
+            cursor.close()
+            conn.close()
 
-    # def update_orders_in_shipment(self, shipment_id, orders):
-        # conn = self.db.connection(self.dbfile)
-        # if conn is None:
-        #     print("DB connection failed")
-        #     return None  # Exit if connection fails
+    def update_orders_in_shipment(self, shipment_id, orders):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails 
         
-        # try:
-        #     cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-        #     # Get the current orders in the shipment
-        #     query = "SELECT id FROM orders WHERE shipment_id = ?"
-        #     cursor.execute(query, (shipment_id,))
-        #     packed_orders = cursor.fetchall()
+            # Get the current orders in the shipment
+            query = "SELECT id FROM orders WHERE shipment_id = ?"
+            cursor.execute(query, (shipment_id,))
+            packed_orders = cursor.fetchall()
 
-        #     packed_order_ids = [order[0] for order in packed_orders]
+            packed_order_ids = [order[0] for order in packed_orders]
 
-        #     # Remove orders that are no longer in the new shipment
-        #     for order_id in packed_order_ids:
-        #         if order_id not in orders:
-        #             # Set shipment_id to -1 and status to "Scheduled"
-        #             update_query = """
-        #                 UPDATE orders SET shipment_id = ?, order_status = ? WHERE id = ?
-        #             """
-        #             cursor.execute(update_query, (-1, "Scheduled", order_id))
+            # Remove orders that are no longer in the new shipment
+            for order_id in packed_order_ids:
+                if order_id not in orders:
+                    # Set shipment_id to -1 and status to "Scheduled"
+                    update_query = """
+                        UPDATE orders SET shipment_id = ?, order_status = ? WHERE id = ?
+                    """
+                    cursor.execute(update_query, (-1, "Scheduled", order_id))
 
-        #     # Add or update orders in the shipment
-        #     for order_id in orders:
-        #         if order_id not in packed_order_ids:
-        #             # Set shipment_id to the new shipment and status to "Packed"
-        #             update_query = """
-        #                 UPDATE orders SET shipment_id = ?, order_status = ? WHERE id = ?
-        #             """
-        #             cursor.execute(update_query, (shipment_id, "Packed", order_id))
+            # Add or update orders in the shipment
+            for order_id in orders:
+                if order_id not in packed_order_ids:
+                    # Set shipment_id to the new shipment and status to "Packed"
+                    update_query = """
+                        UPDATE orders SET shipment_id = ?, order_status = ? WHERE id = ?
+                    """
+                    cursor.execute(update_query, (shipment_id, "Packed", order_id))
 
-        #     # Commit changes to the database
-        #     conn.commit()
+            # Commit changes to the database
+            conn.commit()
 
-        # except Exception as e:
-        #     print(f"An error occurred: {e}")
-        #     conn.rollback()  # Rollback if any error occurs
-        # finally:
-        #     cursor.close()
-        #     conn.close()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            conn.rollback()  # Rollback if any error occurs
+        finally:
+            cursor.close()
+            conn.close()
 
     def remove(self, order_id):
         conn = self.db.connection(self.dbfile)

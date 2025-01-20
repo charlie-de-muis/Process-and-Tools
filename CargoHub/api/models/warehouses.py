@@ -132,7 +132,7 @@ class Warehouses(Base):
                 warehouse['contact'],
                 warehouse['created_at'],
                 warehouse['updated_at'],
-                self.get_timestamp(),  # Assuming this method returns the current timestamp
+                self.get_timestamp(), 
                 warehouse_id
             ))
 

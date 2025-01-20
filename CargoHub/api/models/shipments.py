@@ -50,36 +50,36 @@ class Shipments(Base):
         conn.close()
         return self.convert_to_dict(shipment)
 
-    # def get_items_in_shipment(self, shipment_id):
-    #     conn = self.db.connection(self.dbfile)
-    #     if conn is None:
-    #         print("DB connection failed")
-    #         return None  # Exit if connection fails
+    def get_items_in_shipment(self, shipment_id):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
 
-    #     try:
-    #         cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-    #         # Query the database for the shipment with the given shipment_id
-    #         query = """
-    #             SELECT items FROM shipments WHERE id = ?
-    #         """
-    #         cursor.execute(query, (shipment_id,))
-    #         shipment = cursor.fetchone()
+            # Query the database for the shipment with the given shipment_id
+            query = """
+                SELECT items FROM shipments WHERE id = ?
+            """
+            cursor.execute(query, (shipment_id,))
+            shipment = cursor.fetchone()
 
-    #         if shipment is None:
-    #             print(f"No shipment found with id {shipment_id}")
-    #             return None
+            if shipment is None:
+                print(f"No shipment found with id {shipment_id}")
+                return None
 
-    #         # Assuming items are stored as a JSON column
-    #         return shipment[0]  # Return the items from the shipment
+            # Assuming items are stored as a JSON column
+            return shipment[0]  # Return the items from the shipment
 
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
-    #         return None
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
 
-    #     finally:
-    #         cursor.close()
-    #         conn.close()
+        finally:
+            cursor.close()
+            conn.close()
 
     def add(self, shipment):
         conn = self.db.connection(self.dbfile)
@@ -218,75 +218,100 @@ class Shipments(Base):
             cursor.close()
             conn.close()
 
-    # def update_items_in_shipment(self, shipment_id, items):
-    #     conn = self.db.connection(self.dbfile)
-    #     if conn is None:
-    #         print("DB connection failed")
-    #         return None  # Exit if connection fails
+    def update_items_in_shipment(self, shipment_id, items):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
 
-    #     try:
-    #         cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-    #         # Fetch the current shipment from the database
-    #         shipment = self.get_shipment(shipment_id)
-    #         if shipment is None:
-    #             print(f"Shipment with id {shipment_id} not found")
-    #             return None
+            # Fetch the current shipment from the database
+            shipment = self.get(shipment_id)
+            if shipment is None:
+                print(f"Shipment with id {shipment_id} not found")
+                return None
 
-    #         current_items = shipment["items"]
+            current_items = shipment["items"]
 
-    #         # Process items that are no longer in the shipment
-    #         for x in current_items:
-    #             found = False
-    #             for y in items:
-    #                 if x["item_id"] == y["item_id"]:
-    #                     found = True
-    #                     break
-    #             if not found:
-    #                 inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(x["item_id"])
-    #                 max_ordered = -1
-    #                 max_inventory = None
-    #                 for z in inventories:
-    #                     if z["total_ordered"] > max_ordered:
-    #                         max_ordered = z["total_ordered"]
-    #                         max_inventory = z
-    #                 if max_inventory:
-    #                     max_inventory["total_ordered"] -= x["amount"]
-    #                     max_inventory["total_expected"] = y["total_on_hand"] + y["total_ordered"]
-    #                     data_provider.fetch_inventory_pool().update_inventory(max_inventory["id"], max_inventory)
+            # Process items that are no longer in the shipment
+            for x in current_items:
+                found = False
+                for y in items:
+                    if x["item_id"] == y["item_id"]:
+                        found = True
+                        break
+                if not found:
+                    # Update inventory for removed items
+                    cursor.execute("SELECT * FROM inventories WHERE item_id = ?", (x["item_id"],))
+                    inventories = cursor.fetchall()
+                    max_ordered = -1
+                    max_inventory = None
+                    for z in inventories:
+                        if z["total_ordered"] > max_ordered:
+                            max_ordered = z["total_ordered"]
+                            max_inventory = z
+                    if max_inventory:
+                        max_inventory["total_ordered"] -= x["amount"]
+                        max_inventory["total_expected"] = max_inventory["total_on_hand"] + max_inventory["total_ordered"]
+                        cursor.execute("UPDATE inventories SET total_ordered = ?, total_expected = ? WHERE id = ?", 
+                                       (max_inventory["total_ordered"], max_inventory["total_expected"], max_inventory["id"]))
 
-    #         # Process items that are updated or newly added in the shipment
-    #         for x in current_items:
-    #             for y in items:
-    #                 if x["item_id"] == y["item_id"]:
-    #                     inventories = data_provider.fetch_inventory_pool().get_inventories_for_item(x["item_id"])
-    #                     max_ordered = -1
-    #                     max_inventory = None
-    #                     for z in inventories:
-    #                         if z["total_ordered"] > max_ordered:
-    #                             max_ordered = z["total_ordered"]
-    #                             max_inventory = z
-    #                     if max_inventory:
-    #                         max_inventory["total_ordered"] += y["amount"] - x["amount"]
-    #                         max_inventory["total_expected"] = y["total_on_hand"] + y["total_ordered"]
-    #                         data_provider.fetch_inventory_pool().update_inventory(max_inventory["id"], max_inventory)
+            # Process items that are updated or newly added in the shipment
+            for y in items:
+                found = False
+                for x in current_items:
+                    if x["item_id"] == y["item_id"]:
+                        cursor.execute("SELECT * FROM inventories WHERE item_id = ?", (x["item_id"],))
+                        inventories = cursor.fetchall()
+                        max_ordered = -1
+                        max_inventory = None
+                        for z in inventories:
+                            if z["total_ordered"] > max_ordered:
+                                max_ordered = z["total_ordered"]
+                                max_inventory = z
+                        if max_inventory:
+                            max_inventory["total_ordered"] += y["amount"] - x["amount"]
+                            max_inventory["total_expected"] = max_inventory["total_on_hand"] + max_inventory["total_ordered"]
+                            cursor.execute("UPDATE inventories SET total_ordered = ?, total_expected = ? WHERE id = ?", 
+                                           (max_inventory["total_ordered"], max_inventory["total_expected"], max_inventory["id"]))
+                            max_inventory["total_expected"] = max_inventory["total_on_hand"] + max_inventory["total_ordered"]
+                    cursor.execute("SELECT * FROM inventories WHERE item_id = ?", (y["item_id"],))
+                    inventories = cursor.fetchall()
+                    max_ordered = -1
+                    max_inventory = None
+                    for z in inventories:
+                        if z["total_ordered"] > max_ordered:
+                            max_ordered = z["total_ordered"]
+                            max_inventory = z
+                    if max_inventory:
+                        max_inventory["total_ordered"] += y["amount"]
+                        max_inventory["total_expected"] = max_inventory["total_on_hand"] + max_inventory["total_ordered"]
+                        cursor.execute("UPDATE inventories SET total_ordered = ?, total_expected = ? WHERE id = ?", 
+                                       (max_inventory["total_ordered"], max_inventory["total_expected"], max_inventory["id"]))
+                    if max_inventory:
+                        max_inventory["total_ordered"] += y["amount"]
+                        max_inventory["total_expected"] = max_inventory["total_on_hand"] + max_inventory["total_ordered"]
+                        cursor.execute("UPDATE inventories SET total_ordered = ?, total_expected = ? WHERE id = ?", 
+                                       (max_inventory["total_ordered"], max_inventory["total_expected"], max_inventory["id"]))
 
-    #         # Update the shipment's items field in the database
-    #         update_query = """
-    #             UPDATE shipments SET items = ?, updated_at = ? WHERE id = ?
-    #         """
-    #         cursor.execute(update_query, (json.dumps(items), self.get_timestamp(), shipment_id))
-    #         conn.commit()
+            # Update the shipment's items field in the database
+            update_query = """
+                UPDATE shipments SET items = ?, updated_at = ? WHERE id = ?
+            """
+            cursor.execute(update_query, (json.dumps(items), self.get_timestamp(), shipment_id))
+            conn.commit()
             
-    #         print(f"Shipment {shipment_id} updated successfully.")
+            print(f"Shipment {shipment_id} updated successfully.")
 
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
-    #         conn.rollback()  # Rollback if any error occurs
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            conn.rollback()  # Rollback if any error occurs
 
-    #     finally:
-    #         cursor.close()
-    #         conn.close()
+        finally:
+            cursor.close()
+            conn.close()
 
     def remove(self, shipment_id):
         conn = self.db.connection(self.dbfile)

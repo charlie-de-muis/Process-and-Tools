@@ -9,7 +9,7 @@ class db_start:
             conn = sqlite3.connect(database_name)
             cursor = conn.cursor()
 
-            # Define the table creation SQL statements
+            # Define the table creation 
             create_table_clients = """
             CREATE TABLE IF NOT EXISTS clients (
                 id INTEGER PRIMARY KEY,

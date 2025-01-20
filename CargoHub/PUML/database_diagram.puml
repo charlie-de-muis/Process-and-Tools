@@ -1,6 +1,6 @@
 @startuml Database_diagram CargoHub
 
-map Clients_table #Chartreuse {
+map Clients_table #Plum {
     id => INTEGER
     name => TEXT
     address => TEXT
@@ -15,26 +15,158 @@ map Clients_table #Chartreuse {
     updated_at => TEXT
 }
 
-object Inventories_table
+map Inventories_table #Pink {
+    id => INTEGER
+    item_id => INTEGER
+    description => TEXT
+    item_reference => TEXT
+    loactions => TEXT
+    total_on_hand => INTEGER
+    total_expected => INTEGER
+    total_ordered => INTEGER
+    total_allocated => INTEGER
+    total_available => INTEGER
+    created_at => TEXT
+    updated_at => TEXT
+}
 
-object Item_groups_table
+map Item_groups_table #Khaki {
+    id => INTEGER
+    name => TEXT
+    description => TEXT
+    created_at => TEXT
+    updated_at => TEXT
+}
 
-object Item_lines_table
+map Item_lines_table #PHYSICAL {
+    id => INTEGER
+    name => TEXT
+    description => TEXT
+    created_at => TEXT
+    updated_at => TEXT
+}
 
-object Item_types_table
+map Item_types_table #MistyRose {
+    id => INTEGER
+    name => TEXT
+    description => TEXT
+    created_at => TEXT
+    updated_at => TEXT
+}
 
-object Items_table
+map Items_table #BUSINESS {
+    uid => TEXT
+    code => TEXT
+    description => TEXT
+    short_description => TEXT
+    upc_code => TEXT
+    model_number => TEXT
+    commodity_number => TEXT
+    item_line => INTEGER
+    item_group => INTEGER
+    item_type => INTEGER
+    unit_purchase_quantity => INTEGER
+    unt_order_quantity => INTEGER
+    pack_order_quantity => INTEGER
+    supplier_id => INTEGER
+    supplier_code => TEXT
+    supplier_part_number => TEXT
+    created_at => TEXT
+    updated_at => TEXT
+}
 
-object Locations_table
+map Locations_table #Cornsilk {
+    id => INTEGER
+    warehouse_id => INTEGER
+    code => TEXT
+    name => TEXT
+    created_at => TEXT
+    updated_at => TEXT
+}
 
-object Orders_table
+map Orders_table #IMPLEMENTATION {
+    id => INTEGER
+    order_date => TEXT
+    request_date => TEXT
+    reference => TEXT
+    reference_extra => TEXT
+    order_status => TEXT
+    notes => TEXT
+    shipping_notes => TEXT
+    picking_notes => TEXT
+    warehouse_id => INTEGER
+    ship_to => TEXT
+    bill_to => TEXT
+    shipment_id => INTEGER
+    total_amount => INTEGER
+    total_tax => INTEGER
+    total_surcharge => INTEGER
+    created_at => TEXT
+    updated_at => TEXT
+    items => TEXT
+}
 
-object Shipments_table
+map Shipments_table #PeachPuff {
+    id => INTEGER
+    source_id => INTEGER
+    order_date => TEXT
+    request_date => TEXT
+    shipment_date => TEXT
+    shipment_type => TEXT
+    shipment_status => TEXT
+    notes => TEXT
+    carrier_code => TEXT
+    carrier_description => TEXT
+    service_code => TEXT
+    payment_type => TEXT
+    transfer_mode => TEXT
+    total_package_count => INTEGER
+    total_package_weight => INTEGER
+    created_at => TEXT
+    updated_at => TEXT
+    items => TEXT
+}
 
-object Suppliers_table
+map Suppliers_table #TECHNOLOGY {
+    id => INTEGER
+    code => TEXT
+    name => TEXT
+    address => TEXT
+    address_extra => TEXT
+    city => TEXT
+    zip_code => TEXT
+    province => TEXT
+    country => TEXT
+    contact_name => TEXT
+    phonenumber => TEXT
+    reference => TEXT
+    created_at => TEXT
+    updated_at => TEXT
+}
 
-object Transfers_table
+map Transfers_table #SkyBlue {
+    id => INTEGER
+    reference => TEXT
+    transfer_from => TEXT
+    transfer_to => INTEGER
+    transfer_status => TEXT
+    created_at => TEXT
+    updated_at => TEXT
+    items => TEXT
+}
 
-object Warehouses_table
+map Warehouses_table #Lavender {
+    id => INTEGER
+    code => TEXT
+    name => TEXT
+    address => TEXT
+    zip => TEXT
+    city => TEXT
+    province => TEXT
+    country => TEXT
+    contact => TEXT
+    created_at => TEXT
+    updated_at => TEXT
+}
 
 @enduml

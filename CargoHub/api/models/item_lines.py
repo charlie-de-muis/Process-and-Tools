@@ -98,7 +98,6 @@ class Item_Lines(Base):
         try:
             cursor = conn.cursor()
 
-            # Check if the client exists
             cursor.execute("SELECT * FROM item_lines WHERE id = ?", (item_line_id,))
             item_line_old = cursor.fetchone()
             if item_line_old is None:

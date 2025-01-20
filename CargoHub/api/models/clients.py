@@ -166,7 +166,7 @@ class Clients(Base):
                 client['contact_phone'],
                 client['contact_email'],
                 client['created_at'],
-                self.get_timestamp(),  # Assuming this method returns the current timestamp
+                self.get_timestamp(),  
                 client_id
             ))
 

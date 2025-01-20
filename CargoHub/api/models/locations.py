@@ -5,7 +5,6 @@ from api.models.Database_file import db_start
 
 LOCATIONS = []
 
-# grotendeels klaar
 class Locations(Base):
     def __init__(self):
         self.dbfile = "Cargohub_db.sqlite"
@@ -57,33 +56,33 @@ class Locations(Base):
             cursor.close()
             conn.close()
 
-    # def get_locations_in_warehouse(self, warehouse_id):
-    #     conn = self.db.connection(self.dbfile)
-    #     if conn is None:
-    #         print("DB connection failed")
-    #         return None  # Exit if connection fails
+    def get_locations_in_warehouse(self, warehouse_id):
+        conn = self.db.connection(self.dbfile)
+        if conn is None:
+            print("DB connection failed")
+            return None  # Exit if connection fails
         
-    #     try:
-    #         cursor = conn.cursor()
+        try:
+            cursor = conn.cursor()
 
-    #         # Query to get locations where warehouse_id matches the given warehouse_id
-    #         query = "SELECT * FROM locations WHERE warehouse_id = ?"
-    #         cursor.execute(query, (warehouse_id,))
+            # Query to get locations where warehouse_id matches the given warehouse_id
+            query = "SELECT * FROM locations WHERE warehouse_id = ?"
+            cursor.execute(query, (warehouse_id,))
             
-    #         locations = cursor.fetchall()  # Fetch all matching locations
+            locations = cursor.fetchall()  # Fetch all matching locations
 
-    #         if not locations:
-    #             print(f"No locations found for warehouse_id {warehouse_id}")
-    #             return []  # Return an empty list if no locations are found
+            if not locations:
+                print(f"No locations found for warehouse_id {warehouse_id}")
+                return []  # Return an empty list if no locations are found
 
-    #         return locations  # Return the list of locations
+            return locations  # Return the list of locations
         
-    #     except Exception as e:
-    #         print(f"An error occurred: {e}")
-    #         return None
-    #     finally:
-    #         cursor.close()
-    #         conn.close()
+        except Exception as e:
+            print(f"An error occurred: {e}")
+            return None
+        finally:
+            cursor.close()
+            conn.close()
 
     def add(self, location):
         conn = self.db.connection(self.dbfile)
